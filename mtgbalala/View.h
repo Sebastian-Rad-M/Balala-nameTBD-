@@ -1,16 +1,36 @@
 #pragma once
-
 #include <iostream>
 #include <string>
-
 #include "ActiveRun.h"
 #include "RoundTracker.h"
-
+// this class is a placefolder , we will use sfml 
 enum class GameState { MAIN_MENU, DRAFT, COMBAT, SHOP, GAME_OVER };
 
 class View {
-   public:
-	// ── Main Menu ─────────────────────────────────────────────────────────────
+  private:
+	static void printSeparator(const std::string& title) {
+		std::cout << "\n╔══════════════════════════════════╗\n"
+				  << "║  " << title;
+		const int boxWidth = 34;
+		int padding = boxWidth - static_cast<int>(title.size()) ;
+		for (int i = 0; i < padding; ++i) {
+			std::cout << ' ';
+		}
+		std::cout << "║\n"
+				  << "╚══════════════════════════════════╝\n";
+	}
+
+	static int readInt(int l, int h) {
+		int value;
+		while (!(std::cin >> value) || value < l || value > h) {
+			std::cin.clear();
+			std::cin.ignore(10000, '\n');
+			std::cout << "  Please enter a number between " << l << " and " << h << ": ";
+		}
+		return value;
+	}
+	
+	public:
 	void showMainMenu(GameState& state, ActiveRun& activeRun) {
 		printSeparator("MAIN MENU");
 		std::cout << "  [1] New Run\n"
@@ -27,8 +47,6 @@ class View {
 			state = GameState::GAME_OVER;
 		}
 	}
-
-	// ── Draft ─────────────────────────────────────────────────────────────────
 	void showDraft(GameState& state) {
 		printSeparator("DRAFT PHASE");
 		std::cout << "  (Draft logic stub – will present 10 cards; player picks 5)\n"
@@ -40,15 +58,14 @@ class View {
 		state = GameState::COMBAT;
 	}
 
-	// ── Combat ────────────────────────────────────────────────────────────────
 	void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& round, bool& playerWon) {
 		printSeparator("COMBAT – Round " +
-					   std::to_string(activeRun.run.getCurrentRound()));  // shows target as context
+					   std::to_string(activeRun.run.getCurrentRound())); 
 		activeRun.run.printStatus();
 		round.printStatus();
-
+			//also print hand, graveyard, etc when those are implemented
 		std::cout << "\n  [1] Play a card (stub)\n"
-				  << "  [2] End turn\n"
+				  << "  [2] Discard cards\n"
 				  << "  [3] Concede run\n"
 				  << "  Choice: ";
 
@@ -58,21 +75,17 @@ class View {
 			// TODO: draw from RoundTracker, pick a card from hand, call tryPlayCard
 			std::cout << "  (Card play stub – no card selected yet)\n";
 		} else if (choice == 2) {
-			round.getManaPool().clearPool();
-
-			if (round.isRoundWon()) {
-				playerWon = true;
-				state = GameState::SHOP;
+			if (round.canDiscard()) {
+				round.useDiscard(); //todo: add option to pick which card to discard from hand, also we dont actually discard anything, lmao
+				std::cout << "  You used a discard! Discards left: " << round.canDiscard() << "\n";
 			} else {
-				// stay in COMBAT for the next turn
+				std::cout << "  No discards left!\n";
 			}
-		} else {  // concede
+		} else { 
 			playerWon = false;
 			state = GameState::GAME_OVER;
 		}
 	}
-
-	// ── Shop ──────────────────────────────────────────────────────────────────
 	void showShop(GameState& state, ActiveRun& activeRun) {
 		printSeparator("SHOP");
 		activeRun.triggerPostRoundRewards();
@@ -85,8 +98,6 @@ class View {
 
 		state = GameState::COMBAT;
 	}
-
-	// ── Game Over ─────────────────────────────────────────────────────────────
 	void showGameOver(bool playerWon, const ActiveRun& activeRun) {
 		printSeparator("GAME OVER");
 		if (playerWon) {
@@ -95,32 +106,9 @@ class View {
 			std::cout << "  Your run has ended. Better luck next time.\n";
 		}
 
-		std::cout << "  Rounds won: " << activeRun.run.targetScore()
-				  << "\n\n";  // targetScore reflects progression
+		std::cout << "  Rounds won: " << activeRun.run.getCurrentRound()
+				  << "\n\n";
 	}
 
-   private:
-	// ── Helpers ───────────────────────────────────────────────────────────────
-
-	static void printSeparator(const std::string& title) {
-		std::cout << "\n╔══════════════════════════════════╗\n"
-				  << "║  " << title;
-		const int boxWidth = 34;
-		int padding = boxWidth - static_cast<int>(title.size()) - 2;
-		for (int i = 0; i < padding; ++i) {
-			std::cout << ' ';
-		}
-		std::cout << "║\n"
-				  << "╚══════════════════════════════════╝\n";
-	}
-
-	static int readInt(int lo, int hi) {
-		int value;
-		while (!(std::cin >> value) || value < lo || value > hi) {
-			std::cin.clear();
-			std::cin.ignore(10000, '\n');
-			std::cout << "  Please enter a number between " << lo << " and " << hi << ": ";
-		}
-		return value;
-	}
+   
 };
