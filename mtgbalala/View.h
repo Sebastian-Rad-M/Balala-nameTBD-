@@ -43,7 +43,7 @@ class View {
 	// ── Combat ────────────────────────────────────────────────────────────────
 	void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& round, bool& playerWon) {
 		printSeparator("COMBAT – Round " +
-					   std::to_string(activeRun.run.targetScore()));  // shows target as context
+					   std::to_string(activeRun.run.getCurrentRound()));  // shows target as context
 		activeRun.run.printStatus();
 		round.printStatus();
 

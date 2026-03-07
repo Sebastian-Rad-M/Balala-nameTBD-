@@ -23,4 +23,5 @@ class RunTracker {
 	void printStatus() const {
 		std::cout << "  Run   : Round " << currentRound << "  (won: " << roundsWon << ")\n";
 	}
+	int getCurrentRound() const { return currentRound; }
 };
