@@ -1,0 +1,23 @@
+Phase 1: The Core Engine (State & Math)
+This is the invisible brain of the game
+[ ] Game Manager Class: The singleton or main class that controls the state machine (Main Menu, Draft Phase, Combat/Run, Shop, Game Over).
+[ ] Mana Pool System: A class to track Red, Blue, and Green mana. Needs methods to addMana(), spendMana(), and reset at the end of a turn.
+[ ] Run Tracker: Variables to track Current Score, Target Score (Blind), Current Turn, and Storm Count.
+[ ] Event System (Crucial for Storm): An Observer pattern implementation. An EventQueue that announces things like "Card Played" or "Mana Generated" so your passives know when to trigger.
+Phase 2: The Card System (The MTG Stuff)This is where your OOP requirements will shine the brightest.
+[ ] Base Card Class: Abstract class with properties like ID, Name, ManaCost (an object or array of R/B/G), and a virtual play() function.
+[ ] Action Cards (Inheritance): Classes inheriting from Card like RitualCard (adds mana), CantripCard (draws), and PayloadCard (calculates score based on Storm Count).
+[ ] Passive/Joker System: Classes for Artifacts/Enchantments that sit on the board. These need to listen to your Event System to apply their modifiers.
+Phase 3: Zone Management (Where cards live)Cards need to move between different arrays/vectors seamlessly.
+[ ] The Deck: A stack/vector of card objects. Needs a shuffle() method.
+[ ] The Hand: The cards currently available to play. Needs logic to limit hand size if necessary.
+[ ] The Discard Pile: Where cards go after resolving.
+[ ] The Exile/Banished Zone: For cards that are removed from the run entirely (or just for the turn, like Past in Flames mechanics).
+[ ] Zone Mover Logic: A safe way to transfer card pointers/objects from Deck $\rightarrow$ Hand $\rightarrow$ Discard without causing memory leaks.
+Phase 4: The Meta-Loop (The Balatro Stuff)The out-of-combat economy.[ ] Drafting UI/Logic: The start-of-game screen where you pick 5 out of 10 random cards.
+[ ] Economy Tracker: Tracking the player's Gold.
+[ ] Shop Generator: Logic to pull 3 random cards (weighted by rarity) and 1 random booster pack.
+[ ] Inventory Manager: Allowing the player to permanently add bought cards to their master deck, or pay to remove/trash bad cards.
+
+
+IMPORTANT: EACH ROUND IS ONLY ONE TURN, you get discards like in balatro, but not multimple turns like in mtg
