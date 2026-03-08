@@ -2,6 +2,14 @@
 #include "CardDatabase.h"
 #include "RoundTracker.h"
 #include "View.h"
+
+void View::clearScreen() {
+#if defined(_WIN32)
+    std::system("cls");   // Windows command
+#else
+    std::system("clear"); // Linux/Mac command
+#endif
+}
 void View::printSeparator(const std::string& title) {
 	std::cout << "\n╔══════════════════════════════════╗\n"
 			  << "║  " << title;
@@ -48,7 +56,7 @@ void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	}
 }
 
-void View::showDraft(GameState& state, ActiveRun& activeRun) {
+void View::showDraft(GameState& state, ActiveRun& activeRun) {clearScreen();
 	printSeparator("DRAFT PHASE");
 	std::cout << "  Choose 5 cards from this pool of 10 to form your starting deck.\n\n";
 
@@ -77,7 +85,7 @@ void View::showDraft(GameState& state, ActiveRun& activeRun) {
 
 		std::shared_ptr<Card> chosenCard = pool[choice - 1];
 		activeRun.player.getDeck().addCard(chosenCard);
-
+		clearScreen();
 		std::cout << "  --> Drafted " << chosenCard->getName() << "!\n\n";
 
 		pool.erase(pool.begin() + (choice - 1));
@@ -92,6 +100,7 @@ void View::showDraft(GameState& state, ActiveRun& activeRun) {
 }
 void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound,
 					  bool& playerWon) {
+	clearScreen();
 	printSeparator("COMBAT - Round " + std::to_string(activeRun.run.getCurrentRound()));
 	combatRound.printStatus();
 
@@ -140,6 +149,7 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 	}
 }
 void View::showShop(GameState& state, ActiveRun& activeRun) {
+	clearScreen();
 	printSeparator("SHOP");
 	activeRun.triggerPostRoundRewards();
 	std::cout << "  Gold: " << activeRun.player.getGold() << "\n"

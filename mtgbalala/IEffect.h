@@ -8,3 +8,4 @@ class IEffect {
 
 	virtual std::unique_ptr<IEffect> clone() const = 0;
 };
+///TODO: move this to effect? 

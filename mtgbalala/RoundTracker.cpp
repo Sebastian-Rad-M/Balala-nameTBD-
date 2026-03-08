@@ -13,6 +13,15 @@ void RoundTracker::drawCard() {
 		std::cout << "Deck is empty!\n";
 	}  // TODO: maybe lose? either way add an std exception later
 }
+void RoundTracker::drawCards(int amount) {
+    
+    
+    for (int i = 0; i < amount; i++) drawCard();
+    
+    relics.triggerOnCardDrawn(*this);
+}
+
+
 bool RoundTracker::promptDiscard() {
 	if (hand.size() == 0) {
 		return false;
@@ -57,7 +66,11 @@ void RoundTracker::startNewRound() {
 }
 
 void RoundTracker::addScore(int amount) { currentScore += amount; }
-
+void RoundTracker::addMana(int r, int b, int g) {
+       
+        relics.triggerOnManaAdded(r, b, g, *this);
+        manaPool.addMana(r, b, g);
+    }
 int RoundTracker::getStormCount() const { return stormCount; }
 
 ManaPool& RoundTracker::getManaPool() { return manaPool; }
@@ -71,7 +84,7 @@ void RoundTracker::printStatus() const {
 			  << "  Mana  : " << manaPool << "\n";
 }
 
-void RoundTracker::setupDeck(const Deck& library) {
+void RoundTracker::setupDeck(const Deck& library, const RelicZone& startingRelics) {
 	deck.empty();  // add
 	for (const auto& card : library.getCards()) {
 		deck.addCard(card);
@@ -82,6 +95,7 @@ void RoundTracker::setupDeck(const Deck& library) {
 	for (int i = 0; i < 5; i++) {
 		drawCard();
 	}
+	RelicZone activeRelics = startingRelics;
 }
 
 bool RoundTracker::playCardFromHand(int index) {

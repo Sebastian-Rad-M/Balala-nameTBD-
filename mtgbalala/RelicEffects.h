@@ -1,0 +1,65 @@
+#pragma once
+#include "Relic.h"
+#include "Effect.h" // this is fun
+#include <memory>
+
+class OnManaRelic : public IRelic {
+private:
+    std::string name;
+    std::string description;
+    int multiplier;
+    std::unique_ptr<IEffect> triggerEffect; // Optional extra effect when triggered
+public:
+    OnManaRelic(std::string n, std::string desc, int mult = 1, std::unique_ptr<IEffect> effect = nullptr);
+
+    std::string getName() const override;
+    std::string getDescription() const override;
+
+    void onManaAdded(int& r, int& b, int& g, RoundTracker& state) override;
+      std::shared_ptr<IRelic> clone() const override;
+};
+
+class OnCastTriggerRelic : public IRelic {
+private:
+    std::string name;
+    std::string description;
+    std::unique_ptr<IEffect> triggeredEffect;
+public:
+    OnCastTriggerRelic(std::string n, std::string desc, std::unique_ptr<IEffect> effect);
+
+    std::string getName() const override;
+    std::string getDescription() const override;
+
+    void onCardPlayed(RoundTracker& state) override;
+        std::shared_ptr<IRelic> clone() const override;
+};
+
+class OnDamageRelic : public IRelic {
+private:
+    std::string name, description;
+    int flatBonus; // The modifier
+    std::unique_ptr<IEffect> triggerEffect; // The optional trigger
+
+public:
+    OnDamageRelic(std::string n, std::string desc, int bonus = 0, std::unique_ptr<IEffect> effect = nullptr);
+    std::string getName() const override ;
+    std::string getDescription() const override;
+
+    void onDamageDealt(int& damage, RoundTracker& state) override;
+     std::shared_ptr<IRelic> clone() const override;
+};
+
+class OnDrawRelic : public IRelic {
+private:
+    std::string name, description;
+    std::unique_ptr<IEffect> triggerEffect;
+
+public:
+    OnDrawRelic(std::string n, std::string desc, std::unique_ptr<IEffect> effect);
+
+     std::string getName() const override ;
+    std::string getDescription() const override;
+
+    void onCardDrawn(RoundTracker& state) override ;
+    std::shared_ptr<IRelic> clone() const override;
+};

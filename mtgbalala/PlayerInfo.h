@@ -5,15 +5,13 @@
 #include <vector>
 
 #include "Deck.h"
-/// TODO: Forward declarations, remove later
-class Relic;
+#include "RelicZone.h"
 
 class PlayerInfo {
    private:
 	int gold;
 	Deck deck;
-	// std::vector<std::shared_ptr<Relic>> m_relics;
-	/// TODO: add deck and relics when Card.h / Relic.h are ready
+	RelicZone relics;
 
    public:
 	PlayerInfo() : gold(10) {}
@@ -33,4 +31,5 @@ class PlayerInfo {
 		return true;
 	}
 	Deck& getDeck() { return deck; }
+	RelicZone& getRelicZone() { return relics; }
 };

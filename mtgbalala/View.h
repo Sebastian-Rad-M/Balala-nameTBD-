@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <cstdlib>
 // call me pest control the way i be debuging shit
 // #include "ActiveRun.h"
 // #include "RoundTracker.h"
@@ -11,11 +12,13 @@ class RoundTracker;
 enum class GameState { MAIN_MENU, DRAFT, COMBAT, SHOP, GAME_OVER };
 
 class View {
-   private:
+   private:void clearScreen();
 	static void printSeparator(const std::string& title);
 	static int readInt(int l, int h);
 
    public:
+   
+	
 	void showMainMenu(GameState& state, ActiveRun& activeRun);
 	void showDraft(GameState& state, ActiveRun& activeRun);
 	void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound,

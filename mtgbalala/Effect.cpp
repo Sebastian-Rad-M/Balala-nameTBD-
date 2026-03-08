@@ -26,7 +26,7 @@ std::unique_ptr<IEffect> DiscardEffect::clone() const {
 /// mana
 AddManaEffect::AddManaEffect(int r, int b, int g) : red(r), blue(b), green(g) {}
 void AddManaEffect::resolve(RoundTracker& state) {
-	state.getManaPool().addMana(red, blue, green);
+	state.addMana(red, blue, green);
 	std::cout << "Added Mana -> " << red << "R, " << blue << "B, " << green << "G\n";
 }
 
