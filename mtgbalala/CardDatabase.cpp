@@ -1,5 +1,6 @@
 #include "CardDatabase.h"
 #include "effectsRed.h"
+#include "RNG.h"
 #include <cstdlib>
 #include <random>
 CardDatabase& CardDatabase::getInstance() {
@@ -44,7 +45,7 @@ std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
 
 std::shared_ptr<Card> CardDatabase::getTrueRandomCard() {
     if (library.empty()) return nullptr;
-    
+    ///TODO: add rng.h at some point here too    
     auto rCard = library.begin();
     std::advance(rCard, rand() % library.size());
     return std::make_shared<Card>(rCard->second);
@@ -72,9 +73,7 @@ std::shared_ptr<Card> CardDatabase::getRandomCard() {
         return nullptr;
     }
 
-    std::uniform_int_distribution<> dist(1, totalWeight);
-    int winningTicket = dist(gen);
-
+    int winningTicket = RNG::range(1, totalWeight);
     ///yes, we recalc this, so is life
     int currentWeight = 0;
     for (const auto& pair : library) {

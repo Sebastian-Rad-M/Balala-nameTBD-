@@ -1,12 +1,13 @@
 #include <iostream>
 #include "GameManager.h"
- #include <ctime>
-#include <cstdlib>
-
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 int main() {
-
-  srand(static_cast<unsigned int>(time(nullptr)));
+  #ifdef _WIN32
+      SetConsoleOutputCP(CP_UTF8);
+  #endif
   GameManager::instance().run();
   return 0;
 }

@@ -3,13 +3,12 @@
 #include <random>
 #include <algorithm>
 #include "Cardzone.h"
+#include "RNG.h"
 
 class Deck : public CardZone {
    public:
 	void shuffle() {
-		std::random_device rd; 
-        std::mt19937 g(rd()); 
-        std::shuffle(cards.begin(), cards.end(), g);
+		std::shuffle(cards.begin(), cards.end(), RNG::engine());
 	}
 
 	std::shared_ptr<Card> popTopCard() {
