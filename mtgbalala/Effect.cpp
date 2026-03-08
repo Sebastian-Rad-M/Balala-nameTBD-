@@ -51,3 +51,30 @@ void StormEffect::resolve(RoundTracker& state) {
 std::unique_ptr<IEffect> StormEffect::clone() const {
 	return std::make_unique<StormEffect>(baseEffect->clone());
 }
+
+
+    GraveyardScaleEffect::GraveyardScaleEffect(std::string name, std::unique_ptr<IEffect> effect) 
+        : searchedName(name), baseEffect(std::move(effect)) {}
+    
+    void GraveyardScaleEffect::resolve(RoundTracker& state) {
+        int count = 0;
+        
+        // 1. Scan the graveyard at the EXACT moment of resolution
+        const auto& grave = state.getGraveyard().getCards();
+        for (const auto& card : grave) {
+            if (card->getName() == searchedName) {
+                count++;
+            }
+        }
+        
+        if (count > 0) {
+           
+            for (int i = 0; i < count; ++i) {
+                baseEffect->resolve(state);
+            }
+        }
+    }
+    
+    std::unique_ptr<IEffect> GraveyardScaleEffect::clone() const {
+        return std::make_unique<GraveyardScaleEffect>(searchedName, baseEffect->clone());
+    }

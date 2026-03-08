@@ -56,3 +56,13 @@ class StormEffect : public IEffect {
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };
+
+class GraveyardScaleEffect : public IEffect {
+private:
+    std::string searchedName;
+    std::unique_ptr<IEffect> baseEffect;
+public:
+    GraveyardScaleEffect(std::string name, std::unique_ptr<IEffect> effect);
+    void resolve(RoundTracker& state) override ;
+    std::unique_ptr<IEffect> clone() const override;
+};

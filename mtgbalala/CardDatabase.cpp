@@ -18,9 +18,11 @@ void CardDatabase::loadAllCards() {
 	basicRed.addEffect(std::make_unique<AddManaEffect>(1, 0, 0));
 	library["c_basic_red"] = basicRed;
 
+
 	Card basicBlue("Basic Blue", 0, 0, 0, 0, 'B');
 	basicBlue.addEffect(std::make_unique<AddManaEffect>(0, 1, 0));
 	library["c_basic_blue"] = basicBlue;
+
 
 	Card basicGreen("Basic Green", 0, 0, 0, 0, 'B');
 	basicGreen.addEffect(std::make_unique<AddManaEffect>(0, 0, 1));
@@ -31,22 +33,28 @@ void CardDatabase::loadAllCards() {
 	gitaxianProbe.addEffect(std::make_unique<DrawCardEffect>(1));
 	library["c_gitaxian_probe"] = gitaxianProbe;
 
+
 	Card divination("Divination", 0, 0, 2, 0, 'C');
 	divination.addEffect(std::make_unique<DrawCardEffect>(2));
 	library["c_divination"] = divination;
+
 
 	Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
 	grapeshot.addEffect(std::make_unique<Score>(50));
 	grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(50)));
 	library["c_grapeshot"] = grapeshot;
 
+
 	Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
-	riteOfFlame.addEffect(std::make_unique<RiteOfFlameEffect>());
-	library["c_rite_of_flame"] = riteOfFlame;
+    riteOfFlame.addEffect(std::make_unique<AddManaEffect>(2, 0, 0));
+    riteOfFlame.addEffect(std::make_unique<GraveyardScaleEffect>("Rite of Flame",std::make_unique<AddManaEffect>(1, 0, 0) ));
+    library["c_rite_of_flame"] = riteOfFlame;
+
 
 	Card lightingBolt("Lightning Bolt", 0, 1, 0, 0, 'C');
 	lightingBolt.addEffect(std::make_unique<Score>(100));
 	library["c_lighting_bolt"] = lightingBolt;
+
 
 	Card franticSearch("Frantic_Search", 2, 0, 1, 0, 'C');
 	franticSearch.addEffect(std::make_unique<DrawCardEffect>(2));
@@ -54,15 +62,20 @@ void CardDatabase::loadAllCards() {
 	franticSearch.addEffect(std::make_unique<DiscardEffect>(2));
 	library["c_frantic_search"] = franticSearch;
 
+
 	Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
 	manamorphose.addEffect(std::make_unique<DrawCardEffect>(2));
 	manamorphose.addEffect(std::make_unique<AddManaEffect>(1, 1, 0));
 	library["c_manamorphose"] = manamorphose;
-	// Rares and Legendaries
-
+	
+    // Rares and Legendaries
 	Card ancestralRecall("Ancestral Recall", 0, 0, 1, 0, 'R');
 	ancestralRecall.addEffect(std::make_unique<DrawCardEffect>(3));
 	library["c_ancestral_recall"] = ancestralRecall;
+    
+    Card blackLotus("Black Lotus", 0, 0, 0, 0, 'L');
+    blackLotus.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
+    library["c_black_lotus"] = blackLotus;
 }
 
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
@@ -86,9 +99,6 @@ std::shared_ptr<Card> CardDatabase::getRandomCard() {
 	if (library.empty()) {
 		return nullptr;
 	}
-	/// Sexy randomness
-	std::random_device rd;
-	std::mt19937 gen(rd());
 	/// we use weight to det distribution
 	int totalWeight = 0;
 	for (const auto& pair : library) {
