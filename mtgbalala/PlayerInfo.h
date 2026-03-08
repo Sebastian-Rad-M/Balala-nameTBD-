@@ -16,7 +16,7 @@ class PlayerInfo {
 	/// TODO: add deck and relics when Card.h / Relic.h are ready
 
    public:
-	PlayerInfo() : gold(10)	 {}
+	PlayerInfo() : gold(10) {}
 
 	PlayerInfo(int gold) : gold(gold) {}
 

@@ -11,5 +11,5 @@ file(GLOB SOURCES "*.cpp")
 # 5. Smash them all together into an executable named "game"
 add_executable(game ${SOURCES})
 if(MSVC)
-    add_compile_options(/utf-8)
+	add_compile_options(/utf-8)
 endif()

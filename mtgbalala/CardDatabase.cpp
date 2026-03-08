@@ -1,125 +1,141 @@
-#include "CardDatabase.h"
-#include "EffectRed.h"
-#include "BlueEffects.h"
-#include "RNG.h"
 #include <cstdlib>
 #include <random>
+
+#include "BlueEffects.h"
+#include "CardDatabase.h"
+#include "EffectRed.h"
+#include "RNG.h"
 CardDatabase& CardDatabase::getInstance() {
-    static CardDatabase instance;
-    return instance;
+	static CardDatabase instance;
+	return instance;
 }
 
-CardDatabase::CardDatabase() { 
-    loadAllCards(); 
-}
+CardDatabase::CardDatabase() { loadAllCards(); }
 
 void CardDatabase::loadAllCards() {
-    // --- STARTER CARDS ---
-    Card basicRed("Basic Red", 0, 0, 0, 0, 'B');
-    basicRed.addEffect(std::make_unique<AddManaEffect>(1, 0, 0));
-    library["c_basic_red"] = basicRed;
+	// --- STARTER CARDS ---
+	Card basicRed("Basic Red", 0, 0, 0, 0, 'B');
+	basicRed.addEffect(std::make_unique<AddManaEffect>(1, 0, 0));
+	library["c_basic_red"] = basicRed;
 
-    Card basicBlue("Basic Blue", 0, 0, 0, 0, 'B');
-    basicBlue.addEffect(std::make_unique<AddManaEffect>(0, 1, 0));
-    library["c_basic_blue"] = basicBlue;
+	Card basicBlue("Basic Blue", 0, 0, 0, 0, 'B');
+	basicBlue.addEffect(std::make_unique<AddManaEffect>(0, 1, 0));
+	library["c_basic_blue"] = basicBlue;
 
-    Card basicGreen("Basic Green", 0, 0, 0, 0, 'B');
-    basicGreen.addEffect(std::make_unique<AddManaEffect>(0, 0, 1));
-    library["c_basic_green"] = basicGreen;
-    
-    // --- COMMON CARDS ---
-    Card gitaxianProbe("Gitaxian Probe", 0, 0, 0, 0, 'C');
-    gitaxianProbe.addEffect(std::make_unique<DrawCardEffect>(1));
-    library["c_gitaxian_probe"] = gitaxianProbe;
+	Card basicGreen("Basic Green", 0, 0, 0, 0, 'B');
+	basicGreen.addEffect(std::make_unique<AddManaEffect>(0, 0, 1));
+	library["c_basic_green"] = basicGreen;
 
-    Card divination("Divination", 0,  0, 2, 0, 'C');
-    divination.addEffect(std::make_unique<DrawCardEffect>(2));
-    library["c_divination"] = divination;
-    
-    Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
-    grapeshot.addEffect(std::make_unique<Score>(50));
-    grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(50)));
-    library["c_grapeshot"] = grapeshot;
-    
-    Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
-    riteOfFlame.addEffect(std::make_unique<RiteOfFlameEffect>());
-    library["c_rite_of_flame"] = riteOfFlame;
-    
-    Card lightingBolt("Lightning Bolt", 0, 1, 0, 0, 'C');
-    lightingBolt.addEffect(std::make_unique<Score>(100));
-    library["c_lighting_bolt"] = lightingBolt;
-    
-    Card franticSearch("Frantic_Search", 2, 0, 1, 0, 'C');
-    franticSearch.addEffect(std::make_unique<DrawCardEffect>(2));
-    franticSearch.addEffect(std::make_unique<AddManaEffect>(1, 1, 1));
-    franticSearch.addEffect(std::make_unique<DiscardEffect>(2));
-    library["c_frantic_search"] = franticSearch;
+	// --- COMMON CARDS ---
+	Card gitaxianProbe("Gitaxian Probe", 0, 0, 0, 0, 'C');
+	gitaxianProbe.addEffect(std::make_unique<DrawCardEffect>(1));
+	library["c_gitaxian_probe"] = gitaxianProbe;
 
-    Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
-    manamorphose.addEffect(std::make_unique<DrawCardEffect>(2));
-    manamorphose.addEffect(std::make_unique<AddManaEffect>(1, 1, 0));
-    library["c_manamorphose"] = manamorphose;
-    // Rares and Legendaries
+	Card divination("Divination", 0, 0, 2, 0, 'C');
+	divination.addEffect(std::make_unique<DrawCardEffect>(2));
+	library["c_divination"] = divination;
 
-    Card ancestralRecall("Ancestral Recall", 0, 0, 1, 0, 'R');
-    ancestralRecall.addEffect(std::make_unique<DrawCardEffect>(3));
-    library["c_ancestral_recall"] = ancestralRecall;
+	Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
+	grapeshot.addEffect(std::make_unique<Score>(50));
+	grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(50)));
+	library["c_grapeshot"] = grapeshot;
+
+	Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
+	riteOfFlame.addEffect(std::make_unique<RiteOfFlameEffect>());
+	library["c_rite_of_flame"] = riteOfFlame;
+
+	Card lightingBolt("Lightning Bolt", 0, 1, 0, 0, 'C');
+	lightingBolt.addEffect(std::make_unique<Score>(100));
+	library["c_lighting_bolt"] = lightingBolt;
+
+	Card franticSearch("Frantic_Search", 2, 0, 1, 0, 'C');
+	franticSearch.addEffect(std::make_unique<DrawCardEffect>(2));
+	franticSearch.addEffect(std::make_unique<AddManaEffect>(1, 1, 1));
+	franticSearch.addEffect(std::make_unique<DiscardEffect>(2));
+	library["c_frantic_search"] = franticSearch;
+
+	Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
+	manamorphose.addEffect(std::make_unique<DrawCardEffect>(2));
+	manamorphose.addEffect(std::make_unique<AddManaEffect>(1, 1, 0));
+	library["c_manamorphose"] = manamorphose;
+	// Rares and Legendaries
+
+	Card ancestralRecall("Ancestral Recall", 0, 0, 1, 0, 'R');
+	ancestralRecall.addEffect(std::make_unique<DrawCardEffect>(3));
+	library["c_ancestral_recall"] = ancestralRecall;
 }
 
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
-    if (library.find(cardID) != library.end()) {
-        return std::make_shared<Card>(library[cardID]);
-    }
-    std::cerr << "Error: Card ID " << cardID << " not found!\n";
-    return nullptr;
+	if (library.find(cardID) != library.end()) {
+		return std::make_shared<Card>(library[cardID]);
+	}
+	std::cerr << "Error: Card ID " << cardID << " not found!\n";
+	return nullptr;
 }
 
 std::shared_ptr<Card> CardDatabase::getTrueRandomCard() {
-    if (library.empty()) return nullptr;
-    ///TODO: add rng.h at some point here too    
-    auto rCard = library.begin();
-    std::advance(rCard, rand() % library.size());
-    return std::make_shared<Card>(rCard->second);
+	if (library.empty()) {
+		return nullptr;
+	}
+	/// TODO: add rng.h at some point here too
+	auto rCard = library.begin();
+	std::advance(rCard, rand() % library.size());
+	return std::make_shared<Card>(rCard->second);
 }
 std::shared_ptr<Card> CardDatabase::getRandomCard() {
-   if (library.empty()) return nullptr;
-   ///Sexy randomness 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    ///we use weight to det distribution
-    int totalWeight = 0;
-    for (const auto& pair : library) {
-        char r = pair.second.getRarity();
-        
-        if (r == 'B') continue; // Basics = 0 
-        else if (r == 'C') totalWeight += 60; // Commons = 60% 
-        else if (r == 'U') totalWeight += 30; // Uncommons = 30%
-        else if (r == 'R') totalWeight += 10; // Rares = 10%
-        else if (r == 'L') totalWeight += 1;  // Legendaries = 1%
-    }
+	if (library.empty()) {
+		return nullptr;
+	}
+	/// Sexy randomness
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	/// we use weight to det distribution
+	int totalWeight = 0;
+	for (const auto& pair : library) {
+		char r = pair.second.getRarity();
 
-    // prevent a crash
-    if (totalWeight == 0) {
-        std::cerr << "  [!] Error: No draftable cards in the database!\n";
-        return nullptr;
-    }
+		if (r == 'B') {
+			continue;  // Basics = 0
+		} else if (r == 'C') {
+			totalWeight += 60;	// Commons = 60%
+		} else if (r == 'U') {
+			totalWeight += 30;	// Uncommons = 30%
+		} else if (r == 'R') {
+			totalWeight += 10;	// Rares = 10%
+		} else if (r == 'L') {
+			totalWeight += 1;  // Legendaries = 1%
+		}
+	}
 
-    int winningTicket = RNG::range(1, totalWeight);
-    ///yes, we recalc this, so is life
-    int currentWeight = 0;
-    for (const auto& pair : library) {
-        char r = pair.second.getRarity();
-        
-        if (r == 'B') continue;        
-        if (r == 'C') currentWeight += 60;
-        else if (r == 'U') currentWeight += 30;
-        else if (r == 'R') currentWeight += 10;
-        else if (r == 'L') currentWeight += 1;
-        if (currentWeight >= winningTicket) {
-            return std::make_shared<Card>(pair.second);
-        }
-    }
+	// prevent a crash
+	if (totalWeight == 0) {
+		std::cerr << "  [!] Error: No draftable cards in the database!\n";
+		return nullptr;
+	}
 
-    return nullptr; // Fallback (should never actually be reached) 
-    ///TODO: error handling here, but for now, just return null
+	int winningTicket = RNG::range(1, totalWeight);
+	/// yes, we recalc this, so is life
+	int currentWeight = 0;
+	for (const auto& pair : library) {
+		char r = pair.second.getRarity();
+
+		if (r == 'B') {
+			continue;
+		}
+		if (r == 'C') {
+			currentWeight += 60;
+		} else if (r == 'U') {
+			currentWeight += 30;
+		} else if (r == 'R') {
+			currentWeight += 10;
+		} else if (r == 'L') {
+			currentWeight += 1;
+		}
+		if (currentWeight >= winningTicket) {
+			return std::make_shared<Card>(pair.second);
+		}
+	}
+
+	return nullptr;	 // Fallback (should never actually be reached)
+	/// TODO: error handling here, but for now, just return null
 }

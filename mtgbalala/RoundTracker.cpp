@@ -11,7 +11,7 @@ void RoundTracker::drawCard() {
 		hand.addCard(card);
 	} else {
 		std::cout << "Deck is empty!\n";
-	}  /// TODO: maybe lose? either way add an std exception later
+	}  // TODO: maybe lose? either way add an std exception later
 }
 bool RoundTracker::promptDiscard() {
 	if (hand.size() == 0) {

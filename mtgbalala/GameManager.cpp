@@ -1,41 +1,41 @@
 #include "GameManager.h"
 
 GameManager& GameManager::instance() {
-    static GameManager inst;
-    return inst;
+	static GameManager inst;
+	return inst;
 }
 
 void GameManager::run() {
-    state = GameState::MAIN_MENU;
+	state = GameState::MAIN_MENU;
 
-    while (state != GameState::GAME_OVER) {
-        switch (state) {
-            case GameState::MAIN_MENU:
-                view.showMainMenu(state, activeRun);
-                break;
+	while (state != GameState::GAME_OVER) {
+		switch (state) {
+			case GameState::MAIN_MENU:
+				view.showMainMenu(state, activeRun);
+				break;
 
-            case GameState::DRAFT:
-                view.showDraft(state, activeRun);
-                // TODO: 
-                round.emplace(activeRun);
-                round->setupDeck(activeRun.player.getDeck());
-                break;
+			case GameState::DRAFT:
+				view.showDraft(state, activeRun);
+				// TODO:
+				round.emplace(activeRun);
+				round->setupDeck(activeRun.player.getDeck());
+				break;
 
-            case GameState::COMBAT:
-                view.showCombat(state, activeRun, round.value(), playerWon);
-                break;
+			case GameState::COMBAT:
+				view.showCombat(state, activeRun, round.value(), playerWon);
+				break;
 
-            case GameState::SHOP:
-                view.showShop(state, activeRun);
-               round.emplace(activeRun);
-                round->setupDeck(activeRun.player.getDeck());
-                round->startNewRound();
-                break;
+			case GameState::SHOP:
+				view.showShop(state, activeRun);
+				round.emplace(activeRun);
+				round->setupDeck(activeRun.player.getDeck());
+				round->startNewRound();
+				break;
 
-            default:
-                break;
-        }
-    }
+			default:
+				break;
+		}
+	}
 
-    view.showGameOver(playerWon, activeRun);
+	view.showGameOver(playerWon, activeRun);
 }
