@@ -1,5 +1,6 @@
 #include "CardDatabase.h"
-#include "effectsRed.h"
+#include "EffectRed.h"
+#include "BlueEffects.h"
 #include "RNG.h"
 #include <cstdlib>
 #include <random>
@@ -27,12 +28,42 @@ void CardDatabase::loadAllCards() {
     library["c_basic_green"] = basicGreen;
     
     // --- COMMON CARDS ---
-    Card brainstorm("Brainstorm", 0, 1, 0);
-    library["c_brainstorm"] = brainstorm;
+    Card gitaxianProbe("Gitaxian Probe", 0, 0, 0, 0, 'C');
+    gitaxianProbe.addEffect(std::make_unique<DrawCardEffect>(1));
+    library["c_gitaxian_probe"] = gitaxianProbe;
 
+    Card divination("Divination", 0,  0, 2, 0, 'C');
+    divination.addEffect(std::make_unique<DrawCardEffect>(2));
+    library["c_divination"] = divination;
+    
+    Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
+    grapeshot.addEffect(std::make_unique<Score>(50));
+    grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(50)));
+    library["c_grapeshot"] = grapeshot;
+    
     Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
     riteOfFlame.addEffect(std::make_unique<RiteOfFlameEffect>());
     library["c_rite_of_flame"] = riteOfFlame;
+    
+    Card lightingBolt("Lightning Bolt", 0, 1, 0, 0, 'C');
+    lightingBolt.addEffect(std::make_unique<Score>(100));
+    library["c_lighting_bolt"] = lightingBolt;
+    
+    Card franticSearch("Frantic_Search", 2, 0, 1, 0, 'C');
+    franticSearch.addEffect(std::make_unique<DrawCardEffect>(2));
+    franticSearch.addEffect(std::make_unique<AddManaEffect>(1, 1, 1));
+    franticSearch.addEffect(std::make_unique<DiscardEffect>(2));
+    library["c_frantic_search"] = franticSearch;
+
+    Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
+    manamorphose.addEffect(std::make_unique<DrawCardEffect>(2));
+    manamorphose.addEffect(std::make_unique<AddManaEffect>(1, 1, 0));
+    library["c_manamorphose"] = manamorphose;
+    // Rares and Legendaries
+
+    Card ancestralRecall("Ancestral Recall", 0, 0, 1, 0, 'R');
+    ancestralRecall.addEffect(std::make_unique<DrawCardEffect>(3));
+    library["c_ancestral_recall"] = ancestralRecall;
 }
 
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {

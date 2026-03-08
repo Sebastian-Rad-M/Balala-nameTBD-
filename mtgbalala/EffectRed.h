@@ -1,14 +1,7 @@
 #pragma once
 #include "Effect.h"
 
-class GrapeshotVariants : public IEffect {
-private:
-    int baseScore;
-public:
-    explicit GrapeshotVariants(int score);
-    void resolve(RoundTracker& state) override;
-    std::unique_ptr<IEffect> clone() const override;
-};
+
 
 class RiteOfFlameEffect : public IEffect {
 private:

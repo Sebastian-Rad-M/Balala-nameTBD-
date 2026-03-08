@@ -105,11 +105,10 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 
     // --- 2. PLAYER ACTIONS ---
     std::cout << "\n  [1] Play a card\n"
-              << "  [2] Discard cards\n"
-              << "  [3] End Turn (Concede)\n"
+              << "  [2] End Turn (Concede)\n"
               << "  Choice: ";
 
-    int choice = readInt(1, 3);
+    int choice = readInt(1, 2);
 
     if (choice == 1) {
         if (handCards.empty()) {
@@ -121,9 +120,6 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
             // Array indices start at 0, so we pass cardChoice - 1
             combatRound.playCardFromHand(cardChoice - 1);
         }
-    } 
-    else if (choice == 2) {
-        std::cout << "  (Discarding not implemented yet!)\n";
     } 
     else { 
         playerWon = false;

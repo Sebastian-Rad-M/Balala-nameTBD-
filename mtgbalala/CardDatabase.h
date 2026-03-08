@@ -18,6 +18,6 @@ class CardDatabase {
 
     void loadAllCards();
     std::shared_ptr<Card> createCard(const std::string& cardID);
-     std::shared_ptr<Card> getTrueRandomCard();
+    std::shared_ptr<Card> getTrueRandomCard();
     std::shared_ptr<Card> getRandomCard();
 };

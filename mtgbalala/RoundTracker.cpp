@@ -3,7 +3,7 @@
 RoundTracker::RoundTracker(const ActiveRun& runData)
     : currentRun(runData), currentScore(0), stormCount(0), manaPool(0, 0, 0) {
     targetScore = currentRun.run.targetScore();
-    discardsLeft = currentRun.player.getMaxDiscards();
+   
 }
 
 void RoundTracker::drawCard() {
@@ -14,16 +14,41 @@ void RoundTracker::drawCard() {
         std::cout << "Deck is empty!\n";
     }  /// TODO: maybe lose? either way add an std exception later
 }
+    bool RoundTracker::promptDiscard() {
+        if (hand.size() == 0) {
+            return false; 
+        }
 
-bool RoundTracker::canDiscard() const { 
-    return discardsLeft > 0; 
-}
+        std::cout << "\n  --- DISCARD A CARD ---\n";
+        
+        // 1. Print the current hand
+        const auto& handCards = hand.getCards();
+        for (size_t j = 0; j < handCards.size(); ++j) {
+            std::cout << "  [" << (j + 1) << "] " << *handCards[j] << "\n";
+        }
 
-void RoundTracker::useDiscard() {
-    if (discardsLeft > 0) {
-        discardsLeft--;
+        // 2. Ask for input safely
+        int choice = -1;
+        while (true) {
+            std::cout << "  Choose a card to discard (1-" << handCards.size() << "): ";
+            
+            if (std::cin >> choice && choice >= 1 && choice <= handCards.size()) {
+                break; // Valid input!
+            }
+            
+            // If they typed a letter or out-of-bounds number, clear it and loop
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "  [!] Invalid choice. Try again.\n";
+        }
+
+        // 3. Move it to the graveyard
+        std::cout << "  --> Discarded " << handCards[choice - 1]->getName() << "!\n";
+        hand.moveCardTo(choice - 1, graveyard);
+        
+        return true;
     }
-}
+
 
 bool RoundTracker::isRoundWon() const { 
     return currentScore >= targetScore; 
@@ -32,7 +57,6 @@ bool RoundTracker::isRoundWon() const {
 void RoundTracker::startNewRound() {
     currentScore = 0;
     stormCount = 0;
-    discardsLeft = currentRun.player.getMaxDiscards();
     targetScore = currentRun.run.targetScore();
 }
 
@@ -58,7 +82,6 @@ CardZone& RoundTracker::getHand() {
 void RoundTracker::printStatus() const {
     std::cout << "  Score : " << currentScore << " / " << targetScore << "\n"
               << "  Storm : " << stormCount << "\n"
-              << "  Discards left: " << discardsLeft << "\n"
               << "  Mana  : " << manaPool << "\n";
 }
 

@@ -1,19 +1,7 @@
-#include "effectsRed.h"
+#include "EffectRed.h"
 #include "RoundTracker.h" 
 #include <iostream>
 
-GrapeshotVariants::GrapeshotVariants(int score) : baseScore(score) {}
-
-void GrapeshotVariants::resolve(RoundTracker& state) {
-    int multiplier = state.getStormCount(); 
-    int totalScore = baseScore * multiplier;
-    state.addScore(totalScore); 
-    std::cout << "STORM! Added " << totalScore << " score.\n";
-}
-
-std::unique_ptr<IEffect> GrapeshotVariants::clone() const {
-    return std::make_unique<GrapeshotVariants>(*this);
-}
 
 void RiteOfFlameEffect::resolve(RoundTracker& state) {
         

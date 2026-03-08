@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <memory>
-
+#include <limits>
 #include "ActiveRun.h"
 #include "Card.h"
 #include "Deck.h"
@@ -16,18 +16,14 @@ class RoundTracker {
     int currentScore;
     int targetScore;
     int stormCount;
-    int discardsLeft;
-
    public:
     RoundTracker(const ActiveRun& runData);
 
     void drawCard();
 
+    bool promptDiscard();
    // void tryPlayCard(Card& card); depreciated, replace with playCardFromHand(int index)
- 
-    bool canDiscard() const;
 
-    void useDiscard();
 
     bool isRoundWon() const;
 
