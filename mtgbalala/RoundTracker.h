@@ -64,9 +64,10 @@ class RoundTracker {
 		discardsLeft = currentRun.player.getMaxDiscards();
 		targetScore = currentRun.run.targetScore();
 	}
-
+	void addScore(int amount) { currentScore += amount; }
+	int getStormCount() const { return stormCount; }
 	ManaPool& getManaPool() { return manaPool; }
-
+	CardZone& getGraveyard() { return graveyard; }
 	void printStatus() const {
 		std::cout << "  Score : " << currentScore << " / " << targetScore << "\n"
 				  << "  Storm : " << stormCount << "\n"

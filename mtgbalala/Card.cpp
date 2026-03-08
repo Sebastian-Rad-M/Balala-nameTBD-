@@ -6,7 +6,10 @@ void Card::play(RoundTracker& state) {
         effect->resolve(state);
     }
 }
-
+void Card::addEffect(std::unique_ptr<IEffect> effect) {
+        
+        effects.push_back(std::move(effect));
+    }
 const std::string& Card::getName() const { 
     return name; 
 }

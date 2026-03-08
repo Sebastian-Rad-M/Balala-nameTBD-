@@ -5,7 +5,7 @@ void View::printSeparator(const std::string& title) {
     std::cout << "\n╔══════════════════════════════════╗\n"
               << "║  " << title;
     const int boxWidth = 34;
-    int padding = boxWidth - static_cast<int>(title.size()) ;
+    int padding = boxWidth - static_cast<int>(title.size())-1;
     for (int i = 0; i < padding; ++i) {
         std::cout << ' ';
     }

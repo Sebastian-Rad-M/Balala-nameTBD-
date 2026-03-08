@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-
+#include "effectsRed.h"
 #include "Card.h"
 
 /// i :heart: singletons
@@ -22,9 +22,15 @@ class CardDatabase {
 	CardDatabase& operator=(const CardDatabase&) = delete;
 
 	void loadAllCards() {
-		/// TODO: Json reader, sau 30 de linii ce cpp cu fiecare carte
+		
 		Card brainstorm("Brainstorm", 0, 1, 0);
 		library["c_brainstorm"] = brainstorm;
+
+		Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
+        riteOfFlame.addEffect(std::make_unique<RiteOfFlameEffect>());
+        
+        // This line right here proves why your Tema 1 Copy Operator was mandatory!
+        library["c_rite_of_flame"] = riteOfFlame;
 	}
 
 	std::shared_ptr<Card> createCard(const std::string& cardID) {

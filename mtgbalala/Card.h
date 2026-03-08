@@ -76,7 +76,7 @@ class Card {
     }
 
     void play(RoundTracker& state);
-
+    void addEffect(std::unique_ptr<IEffect> effect);
     // random bs go go go
     const std::string& getName() const;
     int getGenericCost() const;
