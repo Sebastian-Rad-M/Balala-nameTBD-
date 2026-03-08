@@ -1,6 +1,7 @@
 #include "View.h"
 #include "ActiveRun.h"
 #include "RoundTracker.h"
+#include "CardDatabase.h"
 void View::printSeparator(const std::string& title) {
     std::cout << "\n╔══════════════════════════════════╗\n"
               << "║  " << title;
@@ -34,53 +35,112 @@ void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
     if (choice == 1) {
         activeRun.run.reset();
         activeRun.player = PlayerInfo();
+        for (int i = 0; i < 2; ++i) {
+            activeRun.player.getDeck().addCard(CardDatabase::getInstance().createCard("c_basic_red"));
+            activeRun.player.getDeck().addCard(CardDatabase::getInstance().createCard("c_basic_blue"));
+            activeRun.player.getDeck().addCard(CardDatabase::getInstance().createCard("c_basic_green"));
+        }
         state = GameState::DRAFT;
     } else {
         state = GameState::GAME_OVER;
     }
 }
 
-void View::showDraft(GameState& state) {
+void View::showDraft(GameState& state, ActiveRun& activeRun) {
     printSeparator("DRAFT PHASE");
-    std::cout << "  (Draft logic stub – will present 10 cards; player picks 5)\n"
-              << "  Press ENTER to skip draft and start with a default deck...\n";
-    std::cin.ignore();
+              std::cout << "  Choose 5 cards from this pool of 10 to form your starting deck.\n\n";
+    
+    std::vector<std::shared_ptr<Card>> pool;
+    for (int i = 0; i < 10; i++) {
+        std::shared_ptr<Card> randomCard = CardDatabase::getInstance().getRandomCard();
+        if (randomCard) {
+            pool.push_back(randomCard);
+        } else {
+            std::cout << "  [ERROR] Database is empty! Cannot draft.\n";
+            state = GameState::MAIN_MENU;
+            return; 
+            ///TODO: try catch or error or some shi
+        }
+    }
 
-    /// TODO: populate RoundTracker::deck with chosen cards
+    for (int pick = 0; pick < 5;pick++) {
+        std::cout << "  --- Pick " << (pick + 1) << " of 5 ---\n";
+        
+        for (int i = 0; i < pool.size();i++) {
+            std::cout << "  [" << (i + 1) << "] " << *pool[i] << "\n";
+        }
 
+        std::cout << "  Choice: ";
+        int choice = readInt(1, pool.size());
+        
+        std::shared_ptr<Card> chosenCard = pool[choice - 1];
+        activeRun.player.getDeck().addCard(chosenCard);
+        
+        std::cout << "  --> Drafted " << chosenCard->getName() << "!\n\n";
+        
+        pool.erase(pool.begin() + (choice - 1));
+    }
+
+    std::cout << "  Draft complete! Your starting deck has " 
+              << activeRun.player.getDeck().size() << " cards.\n";
+    std::cout << "  Press ENTER to enter combat...\n";
+    std::cin.ignore(10000, '\n');
+    std::cin.get(); 
     state = GameState::COMBAT;
 }
+void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound, bool& playerWon) {
+       printSeparator("COMBAT - Round " + std::to_string(activeRun.run.getCurrentRound())); 
+    combatRound.printStatus();
 
-void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& round, bool& playerWon) {
-    printSeparator("COMBAT – Round " +
-                   std::to_string(activeRun.run.getCurrentRound())); 
-    activeRun.run.printStatus();
-    round.printStatus();
-        //also print hand, graveyard, etc when those are implemented
-    std::cout << "\n  [1] Play a card (stub)\n"
+    std::cout << "\n  --- YOUR HAND ---\n";
+    const auto& handCards = combatRound.getHand().getCards();
+    
+    if (handCards.empty()) {
+        std::cout << "  (Hand is empty!)\n";
+    } else {
+        for (size_t i = 0; i < handCards.size(); ++i) {
+            std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
+        }
+    }
+
+    // --- 2. PLAYER ACTIONS ---
+    std::cout << "\n  [1] Play a card\n"
               << "  [2] Discard cards\n"
-              << "  [3] Concede run\n"
+              << "  [3] End Turn (Concede)\n"
               << "  Choice: ";
 
     int choice = readInt(1, 3);
 
     if (choice == 1) {
-        /// TODO: draw from RoundTracker, pick a card from hand, call tryPlayCard
-        std::cout << "  (Card play stub – no card selected yet)\n";
-    } else if (choice == 2) {
-        if (round.canDiscard()) {
-            round.useDiscard();
-            /// TODO: add option to pick which card to discard from hand, also we dont actually discard anything, lmao
-            std::cout << "  You used a discard! Discards left: " << round.canDiscard() << "\n";
+        if (handCards.empty()) {
+            std::cout << "  [!] You have no cards to play!\n";
         } else {
-            std::cout << "  No discards left!\n";
+            std::cout << "  Which card? (1-" << handCards.size() << "): ";
+            int cardChoice = readInt(1, handCards.size());
+            
+            // Array indices start at 0, so we pass cardChoice - 1
+            combatRound.playCardFromHand(cardChoice - 1);
         }
-    } else { 
+    } 
+    else if (choice == 2) {
+        std::cout << "  (Discarding not implemented yet!)\n";
+    } 
+    else { 
         playerWon = false;
         state = GameState::GAME_OVER;
+        return;
+    }
+
+    // --- 3. WIN CONDITION CHECK ---
+    if (combatRound.isRoundWon()) {
+        std::cout << "\n  *** BLIND DEFEATED! ***\n";
+        std::cout << "  Press ENTER to visit the Shop...\n";
+        std::cin.ignore(10000, '\n');
+        std::cin.get();
+        
+        state = GameState::SHOP;
     }
 }
-
 void View::showShop(GameState& state, ActiveRun& activeRun) {
     printSeparator("SHOP");
     activeRun.triggerPostRoundRewards();

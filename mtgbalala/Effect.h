@@ -4,38 +4,24 @@
 
 #include "IEffect.h"
 #include "RoundTracker.h"
+
 class DrawCardEffect : public IEffect {
    private:
-	int amount;
+    int amount;
 
    public:
-	explicit DrawCardEffect(int amt) : amount(amt) {}
+    explicit DrawCardEffect(int amt) : amount(amt) {}
 
-	void resolve(RoundTracker& state) override {
-		for (int i = 0; i < amount; i++) {
-			state.drawCard();
-		}
-	}
+    void resolve(RoundTracker& state) override;
 
-	std::unique_ptr<IEffect> clone() const override {
-		return std::make_unique<DrawCardEffect>(*this);
-	}
+    std::unique_ptr<IEffect> clone() const override;
 };
 
 class AddManaEffect : public IEffect {
-   private:
-	int red, blue, green;
-
-   public:
-	AddManaEffect(int r, int b, int g) : red(r), blue(b), green(g) {}
-
-	void resolve(RoundTracker& state) override {
-		// state.addMana(red, blue, green);
-		/// TODO: mana system
-		std::cout << "Adding Mana -> R:" << red << " B:" << blue << " G:" << green << "\n";
-	}
-
-	std::unique_ptr<IEffect> clone() const override {
-		return std::make_unique<AddManaEffect>(*this);
-	}
+private:
+    int red, blue, green;
+public:
+    AddManaEffect(int r, int b, int g);
+    void resolve(RoundTracker& state) override;
+    std::unique_ptr<IEffect> clone() const override;
 };

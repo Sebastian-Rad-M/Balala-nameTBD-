@@ -15,9 +15,10 @@ void GameManager::run() {
                 break;
 
             case GameState::DRAFT:
-                view.showDraft(state);
+                view.showDraft(state, activeRun);
                 // TODO: 
                 round.emplace(activeRun);
+                round->setupDeck(activeRun.player.getDeck());
                 break;
 
             case GameState::COMBAT:
@@ -26,7 +27,8 @@ void GameManager::run() {
 
             case GameState::SHOP:
                 view.showShop(state, activeRun);
-                // Advance round and reset round state for the next combat
+               round.emplace(activeRun);
+                round->setupDeck(activeRun.player.getDeck());
                 round->startNewRound();
                 break;
 

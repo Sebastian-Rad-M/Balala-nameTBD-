@@ -19,8 +19,8 @@ class View {
     
   public:
     void showMainMenu(GameState& state, ActiveRun& activeRun);
-    void showDraft(GameState& state);
-    void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& round, bool& playerWon);
+    void showDraft(GameState& state, ActiveRun& activeRun);  
+   void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound, bool& playerWon);
     void showShop(GameState& state, ActiveRun& activeRun);
     void showGameOver(bool playerWon, const ActiveRun& activeRun);
 };
