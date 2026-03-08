@@ -25,7 +25,7 @@ bool ManaPool::canAfford(int costR, int costB, int costG, int costGeneric) const
 	return totalLeftover >= costGeneric;
 }
 
-// check if can afford first
+// TODO: check if can afford first
 void ManaPool::spendMana(int costR, int costB, int costG, int costGeneric) {
 	red -= costR;
 	blue -= costB;
@@ -33,7 +33,7 @@ void ManaPool::spendMana(int costR, int costB, int costG, int costGeneric) {
 	/// We drain Green first, then Blue, then Red (arbitrary priority).
 	/// TODO:player chosen
 	int genericRemaining = costGeneric;
-	int* vars[3] = {&red, &blue, &green};
+	int* vars[3] = {&green, &blue, &red};
 	for (size_t i = 0; i < 3; i++) {
 		while (genericRemaining > 0 && *vars[i] > 0) {
 			(*vars[i])--;

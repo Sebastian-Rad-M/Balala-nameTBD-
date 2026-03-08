@@ -16,7 +16,6 @@ void GameManager::run() {
 
 			case GameState::DRAFT:
 				view.showDraft(state, activeRun);
-				// TODO:
 				round.emplace(activeRun);
 				round->setupDeck(activeRun.player.getDeck());
 				break;
