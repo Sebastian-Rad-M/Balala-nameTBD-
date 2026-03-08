@@ -3,11 +3,12 @@
 #include <limits>
 #include <memory>
 
-#include "ActiveRun.h"
+//#include "ActiveRun.h"
 #include "Card.h"
 #include "Deck.h"
 #include "LightPool.h"
 #include "RelicZone.h"
+class ActiveRun;
 
 class RoundTracker {
    private:

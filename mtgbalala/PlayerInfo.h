@@ -14,7 +14,7 @@ class PlayerInfo {
 	RelicZone relics;
 
    public:
-	PlayerInfo() : gold(10) {}
+	PlayerInfo() : gold(100) {}// initial gold for testing, make 10 or someshit
 
 	PlayerInfo(int gold) : gold(gold) {}
 

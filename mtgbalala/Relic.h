@@ -10,8 +10,8 @@ public:
     
     virtual std::string getName() const = 0;
     virtual std::string getDescription() const = 0;
+    virtual char getRarity() const = 0;
 
-    
     virtual std::shared_ptr<IRelic> clone() const = 0;
     // this is Ieffects resolve but for relics
    virtual void onCardPlayed(RoundTracker& state) {}

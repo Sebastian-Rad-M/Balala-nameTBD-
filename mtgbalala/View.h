@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include "Shop.h"
+#include <limits>
 // call me pest control the way i be debuging shit
 // #include "ActiveRun.h"
 // #include "RoundTracker.h"

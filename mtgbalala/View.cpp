@@ -148,18 +148,93 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 		state = GameState::SHOP;
 	}
 }
+
 void View::showShop(GameState& state, ActiveRun& activeRun) {
-	clearScreen();
-	printSeparator("SHOP");
-	activeRun.triggerPostRoundRewards();
-	std::cout << "  Gold: " << activeRun.player.getGold() << "\n"
-			  << "  (Shop logic stub – will present cards/packs to buy)\n"
-			  << "  Press ENTER to continue to next round...\n";
-	std::cin.ignore();
+    clearScreen();
+	
+    printSeparator("THE MERCHANT");
 
-	activeRun.run.advanceRound();
+    Shop& shop = activeRun.currentShop;
+	shop.generateRandomStock();
+    std::cout << "  Gold: " << activeRun.player.getGold() << "G\n\n";
 
-	state = GameState::COMBAT;
+    const auto& cards = shop.getCards();
+    const auto& relics = shop.getRelics();
+
+    int totalCards = cards.size();
+    int totalRelics = relics.size();
+    int totalItems = totalCards + totalRelics;
+
+    std::cout << "  --- CARDS ---\n";
+    for (int i = 0; i < totalCards; ++i) {
+        std::cout << "  [" << (i + 1) << "] ";
+        if (cards[i].isSold) {
+            std::cout << "[SOLD OUT]\n";
+        } else {
+            std::cout << cards[i].item->getName() << " - " << cards[i].price << "G\n";
+        }
+    }
+
+    std::cout << "\n  --- RELICS ---\n";
+    for (int i = 0; i < totalRelics; ++i) {
+        int displayIndex = i + 1 + totalCards;
+        std::cout << "  [" << displayIndex << "] ";
+        if (relics[i].isSold) {
+            std::cout << "[SOLD OUT]\n";
+        } else {
+            std::cout << relics[i].item->getName() << " (" 
+                      << relics[i].item->getDescription() << ") - " 
+                      << relics[i].price << "G\n";
+        }
+    }
+
+    std::cout << "\n  [0] Leave Shop\n"
+              << "  Choice (0-" << totalItems << "): ";
+
+    int choice = readInt(0, totalItems);
+
+    if (choice == 0) {
+		activeRun.run.advanceRound();
+        state = GameState::COMBAT;
+        return;
+    }
+
+    BuyResult result = BuyResult::INVALID;
+    std::string itemName = "";
+
+    if (choice > 0 && choice <= totalCards) {
+        int cardIndex = choice - 1;
+        if (!cards[cardIndex].isSold) {
+            itemName = cards[cardIndex].item->getName();
+        }
+        result = shop.buyCard(cardIndex, activeRun.player);
+    } else if (choice > totalCards && choice <= totalItems) {
+        int relicIndex = choice - 1 - totalCards;
+        if (!relics[relicIndex].isSold) {
+            itemName = relics[relicIndex].item->getName();
+        }
+        result = shop.buyRelic(relicIndex, activeRun.player);
+    }
+
+    std::cout << "\n";
+    switch (result) {
+        case BuyResult::SUCCESS:
+            std::cout << "  *** Successfully purchased: " << itemName << " ***\n";
+            break;
+        case BuyResult::NO_GOLD:
+            std::cout << "  [!] Not enough gold for " << itemName << ".\n";
+            break;
+        case BuyResult::SOLD_OUT:
+            std::cout << "  [!] That item is already sold out.\n";
+            break;
+        case BuyResult::INVALID:
+            std::cout << "  [!] Invalid selection.\n";
+            break;
+    }
+
+    std::cout << "  Press ENTER to continue...\n";
+    std::cin.ignore(10000, '\n');
+    std::cin.get();
 }
 
 void View::showGameOver(bool playerWon, const ActiveRun& activeRun) {
