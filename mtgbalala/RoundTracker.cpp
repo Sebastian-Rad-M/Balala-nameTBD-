@@ -9,6 +9,7 @@
 		auto card = deck.popTopCard();
 		if (card) {
 			hand.addCard(card);
+			relics.triggerOnCardDrawn(*this);
 		} else {
 			std::cout << "Deck is empty!\n";
 		}  // TODO: maybe lose? either way add an std exception later
@@ -18,7 +19,7 @@
 		
 		for (int i = 0; i < amount; i++) drawCard();
 		
-		relics.triggerOnCardDrawn(*this);
+		
 	}
 
 	void RoundTracker::addStatus(std::unique_ptr<IStatus> status) {
@@ -61,7 +62,7 @@
 		targetScore = currentRun.run.targetScore();
 	}
 
-	void RoundTracker::addScore(int amount) { currentScore += amount; }
+	void RoundTracker::addScore(int amount) {relics.triggerOnDamageDealt(amount, *this); currentScore += amount; }
 	void RoundTracker::addMana(int r, int b, int g) {
 		
 			relics.triggerOnManaAdded(r, b, g, *this);
@@ -113,7 +114,10 @@
 			for (auto& status : activeStatuses) status->onCardPlayed(*card, *this);
 			relics.triggerOnCardPlayed(*this);
 			activeStatuses.erase(std::remove_if(activeStatuses.begin(), activeStatuses.end(),[](const std::unique_ptr<IStatus>& s) { return s->isExpired(); }),activeStatuses.end());
-			
+			//we are testing, remove this SHIT
+			currentScore += 100; 
+            
+
 			hand.moveCardTo(index, graveyard);
 			return true;}
 		else {
