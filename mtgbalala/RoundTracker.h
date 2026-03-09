@@ -43,6 +43,7 @@ class RoundTracker {
 
 	ManaPool& getManaPool();
 	CardZone& getGraveyard();
+	CardZone& getExile();
 	CardZone& getHand();
 	
 	void moveHandCardToExile(int index) {
@@ -52,4 +53,6 @@ class RoundTracker {
 	void setupDeck(const Deck& library, const RelicZone& startingRelics);
 	void printStatus() const;
 	bool playCardFromHand(int index);
+	int getCurrentScore() const;
+    int getTargetScore() const;
 };

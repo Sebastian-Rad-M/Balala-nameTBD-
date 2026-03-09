@@ -103,7 +103,19 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 	clearScreen();
 	printSeparator("COMBAT - Round " + std::to_string(activeRun.run.getCurrentRound()));
 	combatRound.printStatus();
-
+	std::cout << "\n  --- EQUIPPED RELICS ---\n";
+    // We pull the relics straight from the player's persistent data
+    const auto& equippedRelics = activeRun.player.getRelicZone().getRelicZone();
+    
+    if (equippedRelics.empty()) {
+        std::cout << "  (None)\n";
+    } else {
+		int i = 1;
+        for (const auto& relic : equippedRelics) {
+            std::cout << i  <<"."<< relic->getName()<< "\n";	
+			i++;
+		}
+    }
 	std::cout << "\n  --- YOUR HAND ---\n";
 	const auto& handCards = combatRound.getHand().getCards();
 
@@ -115,28 +127,69 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
             playerWon = false;
             state = GameState::GAME_OVER;
             return;}
-	} else {
-		for (size_t i = 0; i < handCards.size(); ++i) {
-			std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
-		}
-	}
+	} else for (int i = 0; i < handCards.size(); i++) std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
+		
 
 	// --- 2. PLAYER ACTIONS ---
-	if (handCards.empty()) {
-			std::cout << "  [!] You have no cards to play!\n";
-		} else {
-			std::cout << "  Which do you want to play card? (1-" << handCards.size() << ", 0 to concede): ";
-			int cardChoice = readInt(0, handCards.size());
-			if(cardChoice== 0) {
-				playerWon = false;
-				state = GameState::GAME_OVER;
-				return;
-			}
-			combatRound.playCardFromHand(cardChoice - 1);
-		}
+	if (handCards.empty()) std::cout << "  [!] You have no cards to play!\n";
+
+    std::cout << "  Which card do you want to play? (1-" << handCards.size() << ", 0 for Menu): ";
+    int cardChoice = readInt(0, handCards.size());
+
+    if (cardChoice == 0) {
+        clearScreen();
+        printSeparator("COMBAT MENU");
+        std::cout << "  [1] Back to Combat\n"
+                  << "  [2] View Graveyard\n"
+                  << "  [3] View Exile\n"
+                  << "  [4] Sell a Relic\n"
+                  << "  [0] Concede Run\n"
+                  << "  Choice: ";
+
+        int menuChoice = readInt(0, 4);
+
+        if (menuChoice == 1) return;
+        else if (menuChoice == 2) {
+            std::cout << "\n  --- GRAVEYARD ---\n";
+            const auto& grave = combatRound.getGraveyard().getCards();
+            if (grave.empty()) std::cout << "  (Empty)\n";
+            else {
+                for (const auto& c : grave) std::cout << "  - " << c->getName() << "\n";
+            }
+            std::cout << "\n  Press ENTER to return...\n";
+            std::cin.ignore(10000, '\n'); std::cin.get();
+            return;
+        } 
+        else if (menuChoice == 3) {
+            std::cout << "\n  --- EXILE ---\n";
+            const auto& exile = combatRound.getExile().getCards();
+            if (exile.empty()) std::cout << "  (Empty)\n";
+            else {
+                for (const auto& c : exile) std::cout << "  - " << c->getName() << "\n";
+            }
+            std::cout << "\n  Press ENTER to return...\n";
+            std::cin.ignore(10000, '\n'); std::cin.get();
+            return;
+        } 
+        else if (menuChoice == 4) {
+            std::cout << "\n  womp womp me no code yet\n"; //TODO: impl relic selling 
+            std::cout << "  Press ENTER to return...\n";
+            std::cin.ignore(10000, '\n'); std::cin.get();
+            return;
+        } 
+        else if (menuChoice == 0) {
+            playerWon = false;
+            state = GameState::GAME_OVER;
+            return;
+        }
+    } else {
+        // They picked a card! (cardChoice is 1-based, so subtract 1 for the array index)
+        combatRound.playCardFromHand(cardChoice - 1);
+    }
 	
 	if (combatRound.isRoundWon()) {
 		std::cout << "\n  *** BLIND DEFEATED! ***\n";
+        std::cout << "  Score : " << combatRound.getCurrentScore() << " / " << combatRound.getTargetScore() << "\n";
 		std::cout << "  Press ENTER to visit the Shop...\n";
 		std::cin.ignore(10000, '\n');
 		std::cin.get();

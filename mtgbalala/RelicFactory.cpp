@@ -12,18 +12,18 @@ RelicDatabase& RelicDatabase::getInstance() {
 void RelicDatabase::loadAllRelics() {
     //here we go again
     registry["r_kinnan"] = std::make_shared<OnManaRelic>("Kinnan, Bonder Prodigy", "+1 to all mana ",'R',2);
-    registry["r_birgi"] = std::make_shared<OnCastTriggerRelic>("Birgi, God of Storytelling","Whenever you cast a spell, add 1 Red mana.",'C',std::make_unique<AddManaEffect>(1, 0, 0));
-    registry["r_guttersnipe_dagger"] = std::make_shared<OnCastTriggerRelic>("Guttersnipe Dagger","Whenever you cast a spell, deal 2 damage.",'R',std::make_unique<Score>(2));
-    registry["r_archmages_tome"] = std::make_shared<OnCastTriggerRelic>("Archmage's Tome","Whenever you cast a spell, draw 1 card.",'R',std::make_unique<DrawCardEffect>(1));
-    registry["r_nivs_scale"] = std::make_shared<OnDrawRelic>("Niv's Scale","Whenever you draw a card, gain 2 Score.",'U',std::make_unique<Score>(2));
-    registry["r_bloodstone_whetstone"] = std::make_shared<OnDamageRelic>("Bloodstone Whetstone","Whenever you deal damage, deal 2 additional damage",'C',2);
+    registry["r_birgi"] = std::make_shared<OnCastTriggerRelic>("Birgi, God of Storytelling"," spell -> add 1 Red mana.",'C',std::make_unique<AddManaEffect>(1, 0, 0));
+    registry["r_guttersnipe_dagger"] = std::make_shared<OnCastTriggerRelic>("Guttersnipe Dagger","spell -> deal 2 damage.",'R',std::make_unique<Score>(2));
+    registry["r_archmages_tome"] = std::make_shared<OnCastTriggerRelic>("Archmage's Tome","spell -> draw 1 card.",'R',std::make_unique<DrawCardEffect>(1));
+    registry["r_nivs_scale"] = std::make_shared<OnDrawRelic>("Niv's Scale","draw -> gain 2 Score.",'U',std::make_unique<Score>(2));
+    registry["r_bloodstone_whetstone"] = std::make_shared<OnDamageRelic>("Bloodstone Whetstone","damage -> deal 2 additional damage",'C',2);
 }
 
 
 std::shared_ptr<IRelic> RelicDatabase::getRelic(const std::string& id) {
     auto it = registry.find(id);
     if (it != registry.end()) {
-        return it->second->clone(); // Stamp out a fresh copy!
+        return it->second->clone(); 
     }
     std::cerr << "  [!] Relic Database Error: Unknown ID '" << id << "'\n";
     return nullptr;

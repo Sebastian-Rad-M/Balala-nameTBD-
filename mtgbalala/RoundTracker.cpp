@@ -42,7 +42,7 @@
 			std::cout << "  Choose a card to discard (1-" << handCards.size() << "): ";
 
 			if (std::cin >> choice && choice >= 1 && choice <= handCards.size()) {
-				break;	// Valid input!
+				break;	
 			}
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -73,7 +73,10 @@
 	ManaPool& RoundTracker::getManaPool() { return manaPool; }
 
 	CardZone& RoundTracker::getGraveyard() { return graveyard; }
+	CardZone& RoundTracker::getExile() { return exile; }
 	CardZone& RoundTracker::getHand() { return hand; }
+	int RoundTracker::getCurrentScore() const { return currentScore; }
+    int RoundTracker::getTargetScore() const { return targetScore; }
 
 	void RoundTracker::printStatus() const {
 		std::cout << "  Score : " << currentScore << " / " << targetScore << "\n"
@@ -114,8 +117,7 @@
 			for (auto& status : activeStatuses) status->onCardPlayed(*card, *this);
 			relics.triggerOnCardPlayed(*this);
 			activeStatuses.erase(std::remove_if(activeStatuses.begin(), activeStatuses.end(),[](const std::unique_ptr<IStatus>& s) { return s->isExpired(); }),activeStatuses.end());
-			//we are testing, remove this SHIT
-			currentScore += 100; 
+			 
             
 
 			hand.moveCardTo(index, graveyard);

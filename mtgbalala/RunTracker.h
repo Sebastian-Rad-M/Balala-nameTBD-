@@ -12,8 +12,7 @@ class RunTracker {
 	void roundWon() { roundsWon++; }
 	void advanceRound() { currentRound++; }
 	int targetScore() const {
-		return 100 + (currentRound - 1) *
-						 50;  /// formula mega provizorie, probabil o sa fie ceva cu exponentiala
+		return 100 + (currentRound - 1) *100;  /// formula mega provizorie, probabil o sa fie ceva cu exponentiala
 	}
 	void reset() {
 		currentRound = 1;

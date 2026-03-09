@@ -10,7 +10,7 @@ private:
     std::vector<std::shared_ptr<IRelic>> relics;
     int capacity;
 public:
-    RelicZone(int maxCapacity = 5) ;
+    RelicZone(int maxCapacity = 3) ;
     bool addRelic(std::shared_ptr<IRelic> relic) ;
     
     void triggerOnManaAdded(int& r, int& b, int& g, RoundTracker& state);
