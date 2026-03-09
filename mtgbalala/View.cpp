@@ -22,7 +22,7 @@ void View::printSeparator(const std::string& title) {
 			  << "╚══════════════════════════════════╝\n";
 }
 
-int View::readInt(int l, int h) {
+	int View::readInt(int l, int h) {
 	int value;
 	while (!(std::cin >> value) || value < l || value > h) {
 		std::cin.clear();
@@ -109,6 +109,12 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 
 	if (handCards.empty()) {
 		std::cout << "  (Hand is empty!)\n";
+		std::cout << "  Press 0 to concede the run: ";
+        int cardChoice = readInt(0, 0); // Force them to type 0
+        if (cardChoice == 0) {
+            playerWon = false;
+            state = GameState::GAME_OVER;
+            return;}
 	} else {
 		for (size_t i = 0; i < handCards.size(); ++i) {
 			std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
@@ -116,35 +122,25 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 	}
 
 	// --- 2. PLAYER ACTIONS ---
-	std::cout << "\n  [1] Play a card\n"
-			  << "  [2] End Turn (Concede)\n"
-			  << "  Choice: ";
-
-	int choice = readInt(1, 2);
-
-	if (choice == 1) {
-		if (handCards.empty()) {
+	if (handCards.empty()) {
 			std::cout << "  [!] You have no cards to play!\n";
 		} else {
-			std::cout << "  Which card? (1-" << handCards.size() << "): ";
-			int cardChoice = readInt(1, handCards.size());
-
-			// Array indices start at 0, so we pass cardChoice - 1
+			std::cout << "  Which do you want to play card? (1-" << handCards.size() << ", 0 to concede): ";
+			int cardChoice = readInt(0, handCards.size());
+			if(cardChoice== 0) {
+				playerWon = false;
+				state = GameState::GAME_OVER;
+				return;
+			}
 			combatRound.playCardFromHand(cardChoice - 1);
 		}
-	} else {
-		playerWon = false;
-		state = GameState::GAME_OVER;
-		return;
-	}
-
-	// --- 3. WIN CONDITION CHECK ---
+	
 	if (combatRound.isRoundWon()) {
 		std::cout << "\n  *** BLIND DEFEATED! ***\n";
 		std::cout << "  Press ENTER to visit the Shop...\n";
 		std::cin.ignore(10000, '\n');
 		std::cin.get();
-
+		activeRun.currentShop.generateRandomStock();	
 		state = GameState::SHOP;
 	}
 }
@@ -155,7 +151,7 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
     printSeparator("THE MERCHANT");
 
     Shop& shop = activeRun.currentShop;
-	shop.generateRandomStock();
+	
     std::cout << "  Gold: " << activeRun.player.getGold() << "G\n\n";
 
     const auto& cards = shop.getCards();

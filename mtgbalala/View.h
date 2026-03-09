@@ -16,10 +16,10 @@ enum class GameState { MAIN_MENU, DRAFT, COMBAT, SHOP, GAME_OVER };
 class View {
    private:void clearScreen();
 	static void printSeparator(const std::string& title);
-	static int readInt(int l, int h);
+	
 
    public:
-   
+   static int readInt(int l, int h);
 	
 	void showMainMenu(GameState& state, ActiveRun& activeRun);
 	void showDraft(GameState& state, ActiveRun& activeRun);

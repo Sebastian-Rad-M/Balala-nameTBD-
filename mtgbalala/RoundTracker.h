@@ -8,6 +8,9 @@
 #include "Deck.h"
 #include "LightPool.h"
 #include "RelicZone.h"
+#include "CardZone.h"
+#include "Status.h"
+#include "View.h"
 class ActiveRun;
 
 class RoundTracker {
@@ -16,11 +19,12 @@ class RoundTracker {
 	RelicZone relics;
 	CardZone hand, graveyard, exile;
 	ManaPool manaPool;
+	std::vector<std::unique_ptr<IStatus>> activeStatuses;
 	const ActiveRun& currentRun;
 	int currentScore;
 	int targetScore;
 	int stormCount;
-
+	int nextSpellMultiplier = 1;
    public:
 	RoundTracker(const ActiveRun& runData);
 
@@ -28,7 +32,7 @@ class RoundTracker {
 	void drawCards(int amount);
 	bool promptDiscard();
 	// void tryPlayCard(Card& card); depreciated, replace with playCardFromHand(int index)
-
+	void addStatus(std::unique_ptr<IStatus> status);
 	bool isRoundWon() const;
 
 	void startNewRound();
@@ -38,10 +42,13 @@ class RoundTracker {
 	int getStormCount() const;
 
 	ManaPool& getManaPool();
-
 	CardZone& getGraveyard();
-
 	CardZone& getHand();
+	
+	void moveHandCardToExile(int index) {
+        hand.moveCardTo(index, exile);
+    }
+	int requestHandTarget();
 	void setupDeck(const Deck& library, const RelicZone& startingRelics);
 	void printStatus() const;
 	bool playCardFromHand(int index);

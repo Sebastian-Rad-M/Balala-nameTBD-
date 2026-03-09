@@ -14,18 +14,19 @@ CardDatabase::CardDatabase() { loadAllCards(); }
 
 void CardDatabase::loadAllCards() {
 	// --- STARTER CARDS ---
+	// name, genericCost, redCost, blueCost, greenCost, rarity
 	Card basicRed("Basic Red", 0, 0, 0, 0, 'B');
-	basicRed.addEffect(std::make_unique<AddManaEffect>(1, 0, 0));
+	basicRed.addEffect(std::make_unique<ConditionalStormCheck>(CompareOp::LESS_THAN, 3,std::make_unique<AddManaEffect>(1, 0, 0)));
 	library["c_basic_red"] = basicRed;
 
 
 	Card basicBlue("Basic Blue", 0, 0, 0, 0, 'B');
-	basicBlue.addEffect(std::make_unique<AddManaEffect>(0, 1, 0));
+	basicBlue.addEffect(std::make_unique<ConditionalStormCheck>(CompareOp::LESS_THAN, 3,std::make_unique<AddManaEffect>(0, 1, 0)));
 	library["c_basic_blue"] = basicBlue;
 
 
 	Card basicGreen("Basic Green", 0, 0, 0, 0, 'B');
-	basicGreen.addEffect(std::make_unique<AddManaEffect>(0, 0, 1));
+	basicGreen.addEffect(std::make_unique<ConditionalStormCheck>(CompareOp::LESS_THAN, 3,std::make_unique<AddManaEffect>(0, 0, 1)));
 	library["c_basic_green"] = basicGreen;
 
 	// --- COMMON CARDS ---
@@ -34,10 +35,9 @@ void CardDatabase::loadAllCards() {
 	library["c_gitaxian_probe"] = gitaxianProbe;
 
 
-	Card divination("Divination", 0, 0, 2, 0, 'C');
+	Card divination("Divination", 1, 0, 1, 0, 'C');
 	divination.addEffect(std::make_unique<DrawCardEffect>(2));
 	library["c_divination"] = divination;
-
 
 	Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
 	grapeshot.addEffect(std::make_unique<Score>(50));
@@ -64,10 +64,14 @@ void CardDatabase::loadAllCards() {
 
 
 	Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
-	manamorphose.addEffect(std::make_unique<DrawCardEffect>(2));
+	manamorphose.addEffect(std::make_unique<DrawCardEffect>(1));
 	manamorphose.addEffect(std::make_unique<AddManaEffect>(1, 1, 0));
-	library["c_manamorphose"] = manamorphose;
-	
+	library["c_manamorphose"] = manamorphose; //maybe make it an uncommon and get of any color? 
+	//Uncommons
+	Card overcharge("Overcharge", 0, 1, 1, 0, 'U');
+    overcharge.addEffect(std::make_unique<ApplyStatusEffect>(std::make_unique<OverchargeStatus>(1) ));
+    library["c_overcharge"] = overcharge;
+
     // Rares and Legendaries
 	Card ancestralRecall("Ancestral Recall", 0, 0, 1, 0, 'R');
 	ancestralRecall.addEffect(std::make_unique<DrawCardEffect>(3));
@@ -76,6 +80,8 @@ void CardDatabase::loadAllCards() {
     Card blackLotus("Black Lotus", 0, 0, 0, 0, 'L');
     blackLotus.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
     library["c_black_lotus"] = blackLotus;
+	
+
 }
 
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {

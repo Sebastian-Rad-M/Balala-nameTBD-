@@ -52,14 +52,31 @@ std::unique_ptr<IEffect> StormEffect::clone() const {
 	return std::make_unique<StormEffect>(baseEffect->clone());
 }
 
+ConditionalStormCheck::ConditionalStormCheck(CompareOp operation, int val, std::unique_ptr<IEffect> effect) 
+        : op(operation), targetValue(val), innerEffect(std::move(effect)) {}
+
+    void ConditionalStormCheck::resolve(RoundTracker& state) {
+        int storm = state.getStormCount();
+        
+        if (evaluateCondition(storm)) {
+            innerEffect->resolve(state);
+        } else {
+            
+            std::cout << "[Nope! Storm count (" << storm << ") did not meet condition: " 
+                      << getOpString() << " " << targetValue << "]\n";
+        }
+    }
+
+    std::unique_ptr<IEffect> ConditionalStormCheck::clone() const {
+        return std::make_unique<ConditionalStormCheck>(op, targetValue, innerEffect->clone());
+    }
 
     GraveyardScaleEffect::GraveyardScaleEffect(std::string name, std::unique_ptr<IEffect> effect) 
         : searchedName(name), baseEffect(std::move(effect)) {}
     
     void GraveyardScaleEffect::resolve(RoundTracker& state) {
         int count = 0;
-        
-        // 1. Scan the graveyard at the EXACT moment of resolution
+
         const auto& grave = state.getGraveyard().getCards();
         for (const auto& card : grave) {
             if (card->getName() == searchedName) {
@@ -77,4 +94,15 @@ std::unique_ptr<IEffect> StormEffect::clone() const {
     
     std::unique_ptr<IEffect> GraveyardScaleEffect::clone() const {
         return std::make_unique<GraveyardScaleEffect>(searchedName, baseEffect->clone());
+    }
+    ApplyStatusEffect::ApplyStatusEffect(std::unique_ptr<IStatus> status) 
+        : statusToApply(std::move(status)) {}
+
+    void ApplyStatusEffect::resolve(RoundTracker& state) {
+        std::cout << " Gained status: " << statusToApply->getName() << "!\n";
+        state.addStatus(statusToApply->clone());
+    }
+
+    std::unique_ptr<IEffect> ApplyStatusEffect::clone() const {
+        return std::make_unique<ApplyStatusEffect>(statusToApply->clone());
     }
