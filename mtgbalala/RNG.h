@@ -1,6 +1,5 @@
-#pragma once
 #include <random>
-
+#pragma once
 class RNG {
    private:
 	///goated rng function

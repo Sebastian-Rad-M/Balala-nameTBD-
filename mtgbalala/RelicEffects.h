@@ -12,7 +12,6 @@ private:
     std::unique_ptr<IEffect> triggerEffect; // Optional extra effect when triggered
 public:
     OnManaRelic(std::string n, std::string desc,char r, int mult = 1, std::unique_ptr<IEffect> effect = nullptr);
-
     std::string getName() const override;
     std::string getDescription() const override;
     char getRarity() const override; 
@@ -29,7 +28,6 @@ private:
     std::unique_ptr<IEffect> triggeredEffect;
 public:
     OnCastTriggerRelic(std::string n, std::string desc,char r, std::unique_ptr<IEffect> effect);
-
     std::string getName() const override;
     std::string getDescription() const override;
     char getRarity() const override; 
@@ -61,7 +59,6 @@ private:
 
 public:
     OnDrawRelic(std::string n, std::string desc,char r, std::unique_ptr<IEffect> effect);
-
      std::string getName() const override ;
     std::string getDescription() const override;
     char getRarity() const override; 

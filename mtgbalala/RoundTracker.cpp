@@ -2,7 +2,7 @@
 	#include "ActiveRun.h"
 	RoundTracker::RoundTracker(const ActiveRun& runData)
 		: currentRun(runData), currentScore(0), stormCount(0), manaPool(0, 0, 0) {
-		targetScore = currentRun.run.targetScore();
+		targetScore = currentRun.calcTargetScore();
 	}
 
 	void RoundTracker::drawCard() {
@@ -27,7 +27,7 @@
 	}
 
 	bool RoundTracker::promptDiscard() {
-		if (hand.size() == 0) {
+		if (hand.getSize() == 0) {
 			return false;
 		}
 
@@ -59,7 +59,7 @@
 	void RoundTracker::startNewRound() {
 		currentScore = 0;
 		stormCount = 0;
-		targetScore = currentRun.run.targetScore();
+		targetScore = currentRun.calcTargetScore();
 	}
 
 	void RoundTracker::addScore(int amount) {relics.triggerOnDamageDealt(amount, *this); currentScore += amount; }
@@ -85,7 +85,7 @@
 	}
 
 	void RoundTracker::setupDeck(const Deck& library, const RelicZone& startingRelics) {
-		deck.empty(); 
+		deck.clearZone(); 
 		for (const auto& card : library.getCards()) {
 			deck.addCard(card);
 		}
@@ -99,7 +99,7 @@
 	}
 
 	bool RoundTracker::playCardFromHand(int index) {
-		if (index < 0 || index >= hand.size()) {
+		if (index < 0 || index >= hand.getSize()) {
 			return false;
 		}
 
@@ -110,16 +110,16 @@
 		int g = card->getGreenCost();
 		int gen = card->getGenericCost();
 		for (auto& status : activeStatuses) status->modifyCost(r, b, g, gen);
-		if (manaPool.canAfford(r, b, g, gen)) {manaPool.spendMana(r, b, g, gen);
+		if (manaPool.canAfford(r, b, g, gen)) {
+			manaPool.spendMana(r, b, g, gen);
 			card->play(*this);
 			stormCount++;
 			std::cout << "  --> Successfully played " << card->getName()<< "!\n";
 			for (auto& status : activeStatuses) status->onCardPlayed(*card, *this);
 			relics.triggerOnCardPlayed(*this);
-			activeStatuses.erase(std::remove_if(activeStatuses.begin(), activeStatuses.end(),[](const std::unique_ptr<IStatus>& s) { return s->isExpired(); }),activeStatuses.end());
-			 
-            
-
+        	for (auto it = activeStatuses.begin(); it != activeStatuses.end(); )
+				if ((*it)->isExpired()) it = activeStatuses.erase(it); 
+					 else it++;
 			hand.moveCardTo(index, graveyard);
 			return true;}
 		else {
@@ -129,16 +129,12 @@
 	}
 	int RoundTracker::requestHandTarget() {
 		const auto& handCards = hand.getCards();
-		if (handCards.empty()) {return -1;}
+		if (handCards.empty()) return -1;
 
 		std::cout << "\n  --- TARGET ---\n";
-		for (int i = 0; i < handCards.size(); i++) {
-			std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
-		}
-		
-		int choice;
-		std::cout << "  Select a card to exile (1-" << handCards.size() << "): ";
-		
-		
-		return View::readInt(1, handCards.size())-1; // Return the 0-based array index!
+		for (int i = 0; i < handCards.size(); i++) std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
+
+		std::cout << "  Select a card to exile (1-" << handCards.size() << "): ";	
+		return View::readInt(1, handCards.size())-1; 
+
 	}

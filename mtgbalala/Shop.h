@@ -1,8 +1,4 @@
 #pragma once
-#include <vector>
-#include <memory>
-#include "CardDatabase.h"
-#include "RelicFactory.h"
 #include "PlayerInfo.h"
 
 enum class BuyResult { SUCCESS, NO_GOLD, SOLD_OUT, INVALID };

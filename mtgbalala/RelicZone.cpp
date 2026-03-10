@@ -1,14 +1,13 @@
 #include "RelicZone.h"
 
-RelicZone::RelicZone(int maxCapacity) : capacity(maxCapacity) {}
-
+    RelicZone::RelicZone(int maxCapacity) : capacity(maxCapacity) {}
     bool RelicZone::addRelic(std::shared_ptr<IRelic> relic) {
         if (relics.size() >= capacity) {
             std::cout << "  [!] Relic Zone is full! Cannot add " << relic->getName() << ".\n";
             return false;
         }
         relics.push_back(relic);
-        std::cout << "  🌟 Acquired Relic: " << relic->getName() << "!\n";
+        std::cout << "  Acquired Relic: " << relic->getName() << "!\n";
         return true;
     }
 

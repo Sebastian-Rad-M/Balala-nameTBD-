@@ -4,13 +4,9 @@
 #include <cstdlib>
 #include "Shop.h"
 #include <limits>
-// call me pest control the way i be debuging shit
-// #include "ActiveRun.h"
-// #include "RoundTracker.h"
 class ActiveRun;
 class RoundTracker;
 
-// this class is a placefolder , we will use sfml
 enum class GameState { MAIN_MENU, DRAFT, COMBAT, SHOP, GAME_OVER };
 
 class View {

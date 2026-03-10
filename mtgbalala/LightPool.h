@@ -1,7 +1,6 @@
-#pragma once
 #include <iostream>
 #include <stdexcept>
-
+#pragma once
 class ManaPool {
    private:
 	int red;
@@ -17,8 +16,10 @@ class ManaPool {
 
 	bool canAfford(int costR, int costB, int costG, int costGeneric) const;
 
-	// check if can afford first
+	
 	void spendMana(int costR, int costB, int costG, int costGeneric);
+	// check canAfford before
+	// for generic We drain Green first, then Blue, then Red (arbitrary priority).
 
 	friend std::ostream& operator<<(std::ostream& os, const ManaPool& pool) {
 		os << "[Mana: " << pool.red << "R, " << pool.blue << "B, " << pool.green << "G]";

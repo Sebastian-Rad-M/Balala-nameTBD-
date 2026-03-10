@@ -2,8 +2,6 @@
 #include <iostream>
 #include <limits>
 #include <memory>
-
-//#include "ActiveRun.h"
 #include "Card.h"
 #include "Deck.h"
 #include "LightPool.h"
@@ -31,7 +29,6 @@ class RoundTracker {
 	void drawCard();
 	void drawCards(int amount);
 	bool promptDiscard();
-	// void tryPlayCard(Card& card); depreciated, replace with playCardFromHand(int index)
 	void addStatus(std::unique_ptr<IStatus> status);
 	bool isRoundWon() const;
 

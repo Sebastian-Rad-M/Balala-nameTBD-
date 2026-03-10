@@ -1,11 +1,14 @@
 
 #include "Shop.h"
+#include <vector>
+#include <memory>
+#include "CardDatabase.h"
+#include "RelicFactory.h"
 
     void Shop::generateRandomStock() {
         cardStock.clear();
         relicStock.clear();
-        
-        // Pull random clones from the databases!
+        //TODO: make price based on rarity
         cardStock.push_back({CardDatabase::getInstance().getRandomCard(), 3, false});
         cardStock.push_back({CardDatabase::getInstance().getRandomCard(), 4, false});
         relicStock.push_back({RelicDatabase::getInstance().getRandomRelic(), 10, false});

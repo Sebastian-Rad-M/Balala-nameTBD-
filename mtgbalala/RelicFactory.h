@@ -3,7 +3,10 @@
 #include <string>
 #include <memory>
 #include <iostream>
-#include "RelicEffects.h"
+#include <map>
+#include <string>
+#include <memory>
+#include "Relic.h"
 
 //i lied its a database 
 class RelicDatabase {
@@ -22,7 +25,6 @@ public:
 
     void loadAllRelics();
 
-    // Hand out clones to the player!
     std::shared_ptr<IRelic> getRelic(const std::string& id);
 
     std::shared_ptr<IRelic> getRandomRelic();

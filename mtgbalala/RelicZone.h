@@ -9,6 +9,7 @@ class RelicZone {
 private:
     std::vector<std::shared_ptr<IRelic>> relics;
     int capacity;
+    
 public:
     RelicZone(int maxCapacity = 3) ;
     bool addRelic(std::shared_ptr<IRelic> relic) ;
@@ -17,6 +18,10 @@ public:
     void triggerOnCardPlayed(RoundTracker& state);
     void triggerOnCardDrawn(RoundTracker& state);
     void triggerOnDamageDealt(int& scoredPts, RoundTracker& state);
+    void clearRelicZone() {
+        relics.clear();
+    }
 
-    std::vector<std::shared_ptr<IRelic>>& getRelicZone() { return relics; }
+    const std::vector<std::shared_ptr<IRelic>>& getRelicZone() const { return relics; }
+    //!TODO:! add clearreliczone and uncoment playerinfo.cpp line 36
 };

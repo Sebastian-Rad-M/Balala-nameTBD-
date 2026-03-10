@@ -41,12 +41,11 @@ void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	int choice = readInt(1, 2);
 
 	if (choice == 1) {
-		activeRun.run.reset();
-		activeRun.player = PlayerInfo();
+		activeRun.resetRun(PlayerInfo()); ///!!
 		const std::string APPEND_COLORS[3] = {"red", "blue", "green"};
 		for (int i = 0; i < 2; i++) {
 			for (size_t j = 0; j < 3; j++) {
-				activeRun.player.getDeck().addCard(
+				activeRun.getPlayer().getDeck().addCard(
 					CardDatabase::getInstance().createCard("c_basic_" + APPEND_COLORS[j]));
 			}
 		}
@@ -84,14 +83,14 @@ void View::showDraft(GameState& state, ActiveRun& activeRun) {clearScreen();
 		int choice = readInt(1, pool.size());
 
 		std::shared_ptr<Card> chosenCard = pool[choice - 1];
-		activeRun.player.getDeck().addCard(chosenCard);
+		activeRun.getPlayer().getDeck().addCard(chosenCard);
 		clearScreen();
 		std::cout << "  --> Drafted " << chosenCard->getName() << "!\n\n";
 
 		pool.erase(pool.begin() + (choice - 1));
 	}
 
-	std::cout << "  Draft complete! Your starting deck has " << activeRun.player.getDeck().size()
+	std::cout << "  Draft complete! Your starting deck has " << activeRun.getPlayer().getDeck().getSize()
 			  << " cards.\n";
 	std::cout << "  Press ENTER to enter combat...\n";
 	std::cin.ignore(10000, '\n');
@@ -101,11 +100,11 @@ void View::showDraft(GameState& state, ActiveRun& activeRun) {clearScreen();
 void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound,
 					  bool& playerWon) {
 	clearScreen();
-	printSeparator("COMBAT - Round " + std::to_string(activeRun.run.getCurrentRound()));
+	printSeparator("COMBAT - Round " + std::to_string(activeRun.getCurrentRound()));
 	combatRound.printStatus();
 	std::cout << "\n  --- EQUIPPED RELICS ---\n";
     // We pull the relics straight from the player's persistent data
-    const auto& equippedRelics = activeRun.player.getRelicZone().getRelicZone();
+    const auto& equippedRelics = activeRun.getPlayer().getRelicZone().getRelicZone();
     
     if (equippedRelics.empty()) {
         std::cout << "  (None)\n";
@@ -193,7 +192,8 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 		std::cout << "  Press ENTER to visit the Shop...\n";
 		std::cin.ignore(10000, '\n');
 		std::cin.get();
-		activeRun.currentShop.generateRandomStock();	
+        activeRun.finishRoundSequence();
+		activeRun.getShop().generateRandomStock();	
 		state = GameState::SHOP;
 	}
 }
@@ -203,9 +203,9 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
 	
     printSeparator("THE MERCHANT");
 
-    Shop& shop = activeRun.currentShop;
+    Shop& shop = activeRun.getShop();//!!!
 	
-    std::cout << "  Gold: " << activeRun.player.getGold() << "G\n\n";
+    std::cout << "  Gold: " << activeRun.getPlayer().getGold() << "G\n\n";
 
     const auto& cards = shop.getCards();
     const auto& relics = shop.getRelics();
@@ -243,7 +243,6 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
     int choice = readInt(0, totalItems);
 
     if (choice == 0) {
-		activeRun.run.advanceRound();
         state = GameState::COMBAT;
         return;
     }
@@ -256,13 +255,13 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
         if (!cards[cardIndex].isSold) {
             itemName = cards[cardIndex].item->getName();
         }
-        result = shop.buyCard(cardIndex, activeRun.player);
+        result = shop.buyCard(cardIndex, activeRun.getPlayer());
     } else if (choice > totalCards && choice <= totalItems) {
         int relicIndex = choice - 1 - totalCards;
         if (!relics[relicIndex].isSold) {
             itemName = relics[relicIndex].item->getName();
         }
-        result = shop.buyRelic(relicIndex, activeRun.player);
+        result = shop.buyRelic(relicIndex, activeRun.getPlayer());
     }
 
     std::cout << "\n";
@@ -294,5 +293,5 @@ void View::showGameOver(bool playerWon, const ActiveRun& activeRun) {
 		std::cout << "  Your run has ended. Better luck next time.\n";
 	}
 
-	std::cout << "  Rounds won: " << activeRun.run.getCurrentRound() << "\n\n";
+	std::cout << "  Rounds won: " << activeRun.getCurrentRound() << "\n\n";
 }

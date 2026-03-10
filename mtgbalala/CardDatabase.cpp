@@ -1,10 +1,9 @@
 #include <cstdlib>
 #include <random>
-
-#include "BlueEffects.h"
 #include "CardDatabase.h"
-#include "EffectRed.h"
 #include "RNG.h"
+#include "Effect.h"
+
 CardDatabase& CardDatabase::getInstance() {
 	static CardDatabase instance;
 	return instance;
@@ -13,7 +12,7 @@ CardDatabase& CardDatabase::getInstance() {
 CardDatabase::CardDatabase() { loadAllCards(); }
 
 void CardDatabase::loadAllCards() {
-	// --- STARTER CARDS ---
+	// --- STARTER CARDS --- 
 	// name, genericCost, redCost, blueCost, greenCost, rarity
 	Card basicRed("Basic Red", 0, 0, 0, 0, 'B');
 	basicRed.addEffect(std::make_unique<ConditionalStormCheck>(CompareOp::LESS_THAN, 3,std::make_unique<AddManaEffect>(1, 0, 0)));
@@ -81,9 +80,8 @@ void CardDatabase::loadAllCards() {
     blackLotus.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
     library["c_black_lotus"] = blackLotus;
 	
-
+	//TODO: JSON PARCER
 }
-
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
 	if (library.find(cardID) != library.end()) {
 		return std::make_shared<Card>(library[cardID]);
@@ -93,19 +91,17 @@ std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
 }
 
 std::shared_ptr<Card> CardDatabase::getTrueRandomCard() {
-	if (library.empty()) {
-		return nullptr;
-	}
-	/// TODO: add rng.h at some point here too
-	auto rCard = library.begin();
-	std::advance(rCard, rand() % library.size());
-	return std::make_shared<Card>(rCard->second);
+	if (library.empty()) return nullptr;    
+    int randomIndex = RNG::range(0, library.size() - 1);
+    auto rCard = library.begin();
+    std::advance(rCard, randomIndex);
+    return std::make_shared<Card>(rCard->second);
 }
+
 std::shared_ptr<Card> CardDatabase::getRandomCard() {
 	if (library.empty()) {
 		return nullptr;
 	}
-	/// we use weight to det distribution
 	int totalWeight = 0;
 	for (const auto& pair : library) {
 		char r = pair.second.getRarity();
@@ -122,15 +118,12 @@ std::shared_ptr<Card> CardDatabase::getRandomCard() {
 			totalWeight += 1;  // Legendaries = 1%
 		}
 	}
-
-	// prevent a crash
 	if (totalWeight == 0) {
 		std::cerr << "  [!] Error: No draftable cards in the database!\n";
 		return nullptr;
 	}
 
 	int winningTicket = RNG::range(1, totalWeight);
-	/// yes, we recalc this, so is life
 	int currentWeight = 0;
 	for (const auto& pair : library) {
 		char r = pair.second.getRarity();
@@ -152,6 +145,6 @@ std::shared_ptr<Card> CardDatabase::getRandomCard() {
 		}
 	}
 
-	return nullptr;	 // Fallback (should never actually be reached)
-	/// TODO: error handling here, but for now, just return null
+	return nullptr;	 // Fallback 
+	/// TODO: error handling 
 }

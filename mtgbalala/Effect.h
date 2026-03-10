@@ -1,16 +1,8 @@
 #pragma once
-#include <iostream>
-#include <memory>
-
 #include "IEffect.h"
 #include "RoundTracker.h"
 
-enum class CompareOp {
-    LESS_THAN,          // < 
-    GREATER_THAN,       // > 
-    EQUALS,             // == 
-    MODULO_EQUALS_ZERO  // %  == 0
-};
+enum class CompareOp {LESS_THAN,GREATER_THAN,EQUALS, MODULO_EQUALS_ZERO };
 
 class DrawCardEffect : public IEffect {
    private:
@@ -18,20 +10,16 @@ class DrawCardEffect : public IEffect {
 
    public:
 	explicit DrawCardEffect(int amt) : amount(amt) {}
-
 	void resolve(RoundTracker& state) override;
-
 	std::unique_ptr<IEffect> clone() const override;
 };
 
 class DiscardEffect : public IEffect {
    private:
 	int amount;
-
    public:
 	explicit DiscardEffect(int amt) : amount(amt) {}
 	void resolve(RoundTracker& state) override;
-
 	std::unique_ptr<IEffect> clone() const override;
 };
 
@@ -40,7 +28,7 @@ class AddManaEffect : public IEffect {
 	int red, blue, green;
 
    public:
-	AddManaEffect(int r, int b, int g);
+	AddManaEffect(int r, int b, int g) : red(r), blue(b), green(g) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };
@@ -50,7 +38,7 @@ class Score : public IEffect {
 	int baseScore;
 
    public:
-	explicit Score(int score);
+    Score(int score) : baseScore(score) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };
@@ -59,13 +47,14 @@ class StormEffect : public IEffect {
    private:
 	std::unique_ptr<IEffect> baseEffect;  // WE ARE DEEP IN THE TRENCHES
    public:
-	StormEffect(std::unique_ptr<IEffect> effect);
+    StormEffect(std::unique_ptr<IEffect> effect) : baseEffect(std::move(effect)) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };
 
 class ConditionalStormCheck : public IEffect {
-private:
+    //TODO transform this into coditional anythign and have to pass a getstorm
+    private:
     CompareOp op;
     int targetValue;
     std::unique_ptr<IEffect> innerEffect;
@@ -79,18 +68,9 @@ private:
             default: return false;
         }
     }
-
-    std::string getOpString() const {
-        switch (op) {
-            case CompareOp::LESS_THAN: return "<";
-            case CompareOp::GREATER_THAN: return ">";
-            case CompareOp::EQUALS: return "==";
-            case CompareOp::MODULO_EQUALS_ZERO: return "% X == 0";
-            default: return "?";
-        }
-    }
 public:
-    ConditionalStormCheck(CompareOp operation, int val, std::unique_ptr<IEffect> effect);
+    ConditionalStormCheck(CompareOp operation, int val, std::unique_ptr<IEffect> effect) 
+        : op(operation), targetValue(val), innerEffect(std::move(effect)) {}
     void resolve(RoundTracker& state) override ;
     std::unique_ptr<IEffect> clone() const override;
 };
@@ -100,10 +80,8 @@ private:
     std::unique_ptr<IStatus> statusToApply;
 
 public:
-    ApplyStatusEffect(std::unique_ptr<IStatus> status);
-
+   ApplyStatusEffect(std::unique_ptr<IStatus> status) : statusToApply(std::move(status)) {}
     void resolve(RoundTracker& state) override ;
-
     std::unique_ptr<IEffect> clone() const override;
 };
 
@@ -112,7 +90,7 @@ private:
     std::string searchedName;
     std::unique_ptr<IEffect> baseEffect;
 public:
-    GraveyardScaleEffect(std::string name, std::unique_ptr<IEffect> effect);
+     GraveyardScaleEffect(std::string name, std::unique_ptr<IEffect> effect) : searchedName(name), baseEffect(std::move(effect)) {}
     void resolve(RoundTracker& state) override ;
     std::unique_ptr<IEffect> clone() const override;
 };

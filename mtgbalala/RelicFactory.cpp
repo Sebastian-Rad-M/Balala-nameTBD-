@@ -1,5 +1,6 @@
 #include "RelicFactory.h"
-
+#include "RelicEffects.h"
+#include "RNG.h"
 RelicDatabase::RelicDatabase() { 
     loadAllRelics(); 
 }
