@@ -1,7 +1,7 @@
 #pragma once
 #include "IEffect.h"
 #include "RoundTracker.h"
-
+#include <functional>
 enum class CompareOp { LESS_THAN, GREATER_THAN, EQUALS, MODULO_EQUALS_ZERO };
 
 class DrawCardEffect : public IEffect {
@@ -47,40 +47,37 @@ class Score : public IEffect {
 
 class StormEffect : public IEffect {
    private:
-	std::unique_ptr<IEffect> baseEffect;  // WE ARE DEEP IN THE TRENCHES
+	std::unique_ptr<IEffect> baseEffect; 
    public:
 	StormEffect(std::unique_ptr<IEffect> effect) : baseEffect(std::move(effect)) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };
 
-class ConditionalStormCheck : public IEffect {
-	// TODO: transform this into coditional anythign and have to pass a getstorm
-   private:
-	CompareOp op;
-	int targetValue;
-	std::unique_ptr<IEffect> innerEffect;
+using ConditionFunc = std::function<bool(const RoundTracker&)>;
+class ConditionalEffect : public IEffect {
+private:
+    ConditionFunc condition;
+    std::unique_ptr<IEffect> effectToResolve; 
 
-	bool evaluateCondition(const int currentStorm) const {
-		switch (op) {
-			case CompareOp::LESS_THAN:
-				return currentStorm < targetValue;
-			case CompareOp::GREATER_THAN:
-				return currentStorm > targetValue;
-			case CompareOp::EQUALS:
-				return currentStorm == targetValue;
-			case CompareOp::MODULO_EQUALS_ZERO:
-				return currentStorm > 0 && (currentStorm % targetValue) == 0;
-			default:
-				return false;
-		}
-	}
-
-   public:
-	ConditionalStormCheck(const CompareOp operation, const int val, std::unique_ptr<IEffect> effect)
-		: op(operation), targetValue(val), innerEffect(std::move(effect)) {}
-	void resolve(RoundTracker& state) override;
+public:
+    ConditionalEffect(ConditionFunc cond, std::unique_ptr<IEffect> effect) : condition(std::move(cond)), effectToResolve(std::move(effect)) {}
+    void resolve(RoundTracker& state) override ;
 	std::unique_ptr<IEffect> clone() const override;
+};
+class LambdaEffect : public IEffect {
+private:
+    std::function<void(RoundTracker&)> action;
+
+public:
+    LambdaEffect(std::function<void(RoundTracker&)> act) 
+        : action(std::move(act)) {}
+
+    void resolve(RoundTracker& state) override {
+        action(state);
+		}
+	std::unique_ptr<IEffect> clone() const override;
+    
 };
 
 class ApplyStatusEffect : public IEffect {

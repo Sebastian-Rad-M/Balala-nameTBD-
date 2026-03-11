@@ -13,4 +13,8 @@ class CardZone {
 	void clearZone();
 	void moveCardTo(int index, CardZone& destination);
 	const std::vector<std::shared_ptr<Card>>& getCards() const;
+	std::shared_ptr<Card> popTopCard();
+    void addCardToBottom(std::shared_ptr<Card> c);
+	void shuffle();
+
 };

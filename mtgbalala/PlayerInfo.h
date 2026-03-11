@@ -1,11 +1,11 @@
 #pragma once
 #include "Card.h"
-#include "Deck.h"
+#include "Cardzone.h"
 #include "RelicZone.h"
 class PlayerInfo {
    private:
 	int gold;
-	Deck deck;
+	CardZone deck;
 	RelicZone relics;
 
    public:
@@ -18,7 +18,7 @@ class PlayerInfo {
 
 	void addGold(const int amount);
 	bool spendGold(const int amount);
-	Deck& getDeck();
+	CardZone& getDeck();
 	RelicZone& getRelicZone();
 
 	// copy =opp

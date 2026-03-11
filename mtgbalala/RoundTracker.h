@@ -5,7 +5,6 @@
 
 #include "Card.h"
 #include "CardZone.h"
-#include "Deck.h"
 #include "LightPool.h"
 #include "RelicZone.h"
 #include "Status.h"
@@ -14,7 +13,7 @@ class ActiveRun;
 
 class RoundTracker {
    private:
-	Deck deck;
+	CardZone deck;
 	RelicZone relics;
 	CardZone hand, graveyard, exile;
 	ManaPool manaPool;
@@ -40,7 +39,7 @@ class RoundTracker {
 	void addMana(int r, int b, int g);
 	void promptForManaColor(ManaPool& manaPool,int nr=1);
 	int getStormCount() const;
-	
+	CardZone& getDeck();
 	ManaPool& getManaPool();
 	CardZone& getGraveyard();
 	CardZone& getExile();
@@ -48,7 +47,7 @@ class RoundTracker {
 	RelicZone& getRelicZone();
 	void moveHandCardToExile(int index) { hand.moveCardTo(index, exile); }
 	int requestHandTarget();
-	void setupDeck(const Deck& library, const RelicZone& startingRelics);
+	void setupDeck(const CardZone& library, const RelicZone& startingRelics);
 	void printStatus() const;
 	bool playCardFromHand(int index);
 	int getCurrentScore() const;

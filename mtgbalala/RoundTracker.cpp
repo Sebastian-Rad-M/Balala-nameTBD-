@@ -92,7 +92,7 @@ void RoundTracker::promptForManaColor(ManaPool& manaPool,int nr) {
 int RoundTracker::getStormCount() const { return stormCount; }
 
 ManaPool& RoundTracker::getManaPool() { return manaPool; }
-
+CardZone&  RoundTracker::getDeck(){return deck;}
 CardZone& RoundTracker::getGraveyard() { return graveyard; }
 CardZone& RoundTracker::getExile() { return exile; }
 CardZone& RoundTracker::getHand() { return hand; }
@@ -105,7 +105,7 @@ void RoundTracker::printStatus() const {
 			  << "  Mana  : " << manaPool << "\n";
 }
 
-void RoundTracker::setupDeck(const Deck& library, const RelicZone& startingRelics) {
+void RoundTracker::setupDeck(const CardZone& library, const RelicZone& startingRelics) {
 	deck.clearZone();
 	for (const auto& card : library.getCards()) {
 		deck.addCard(card);

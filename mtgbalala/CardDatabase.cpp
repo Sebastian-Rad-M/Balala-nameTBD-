@@ -3,7 +3,7 @@
 #include "RNG.h"
 #include "json.hpp"
 using json = nlohmann::json;
-
+#include <unistd.h>
 CardDatabase& CardDatabase::getInstance() {
 	static CardDatabase instance;
 	return instance;
@@ -15,18 +15,15 @@ void CardDatabase::loadAllCards() {
 	// --- STARTER CARDS ---
 	// name, genericCost, redCost, blueCost, greenCost, rarity
 	Card basicRed("Basic Red", 0, 0, 0, 0, 'B');
-	basicRed.addEffect(std::make_unique<ConditionalStormCheck>(
-		CompareOp::LESS_THAN, 3, std::make_unique<AddManaEffect>(1, 0, 0)));
+	basicRed.addEffect(std::make_unique<ConditionalEffect>([](const RoundTracker& state) {return state.getStormCount() < 3;}, std::make_unique<AddManaEffect>(1, 0, 0)));
 	library["c_basic_red"] = basicRed;
 
 	Card basicBlue("Basic Blue", 0, 0, 0, 0, 'B');
-	basicBlue.addEffect(std::make_unique<ConditionalStormCheck>(
-		CompareOp::LESS_THAN, 3, std::make_unique<AddManaEffect>(0, 1, 0)));
+	basicBlue.addEffect(std::make_unique<ConditionalEffect>([](const RoundTracker& state) { return state.getStormCount() < 3; }, std::make_unique<AddManaEffect>(0,1, 0)));
 	library["c_basic_blue"] = basicBlue;
 
 	Card basicGreen("Basic Green", 0, 0, 0, 0, 'B');
-	basicGreen.addEffect(std::make_unique<ConditionalStormCheck>(
-		CompareOp::LESS_THAN, 3, std::make_unique<AddManaEffect>(0, 0, 1)));
+	basicGreen.addEffect(std::make_unique<ConditionalEffect>([](const RoundTracker& state) { return state.getStormCount() < 3; }, std::make_unique<AddManaEffect>(0,0,1)));
 	library["c_basic_green"] = basicGreen;
 
 	// --- COMMON CARDS ---
@@ -74,6 +71,74 @@ void CardDatabase::loadAllCards() {
 	ancestralRecall.addEffect(std::make_unique<DrawCardEffect>(3));
 	library["c_ancestral_recall"] = ancestralRecall;
 
+	Card graveBlast("Grave Blast", 1, 1, 0, 0, 'C'); // Cost: 1 Red, Rare
+	graveBlast.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) 
+	{
+        auto& grave = state.getGraveyard();
+        auto& exile = state.getExile();        
+        int cardsToExile = grave.getCards().size();
+        if (cardsToExile > 0) {
+            while (!grave.getCards().empty()) {
+                exile.addCard(grave.popTopCard()); 
+            }
+            state.addScore(5*cardsToExile); 
+            std::cout << "  --> Exiled " << cardsToExile << " cards! Dealt " << 5* cardsToExile << " damage!\n";
+        } else std::cout << "  --> Graveyard was empty. 0 damage dealt.\n";}));
+	library["c_grave_blast"] = std::move(graveBlast);
+	
+	Card memoryDredge("Memory Dredge", 0, 2, 0, 0,'C'); // Cost: 2 Blue. Rare.
+	memoryDredge.addEffect(std::make_unique<LambdaEffect>(
+    [](RoundTracker& state) {
+        auto& grave = state.getGraveyard();
+		auto& exile = state.getExile();
+		auto& hand  = state.getHand();
+        auto& deck  = state.getDeck(); 
+        int maxExile = grave.getCards().size();
+        if (maxExile == 0) {
+            std::cout << "  [!] Graveyard is empty. You exile 0, look at 0.\n";
+            return; 
+        }
+		int numToExile = -1;
+        while (numToExile < 0 || numToExile > maxExile) {
+            std::cout << "  Graveyard has " << maxExile << " cards.\n";
+            std::cout << "  How many do you want to exile from the top? (0 - " << maxExile << "): ";
+            std::cin >> numToExile;
+            if (std::cin.fail()) {std::cin.clear(); std::cin.ignore(10000, '\n');numToExile = -1; }
+        }
+        if (numToExile == 0) return; 
+
+        for (int i = 0; i < numToExile; i++) exile.addCard(grave.popTopCard());  //TODO:maybe make em pick? nah, its a feature
+        std::vector<std::shared_ptr<Card>> revealed;
+        int cardsToLookAt = std::min(numToExile, (int)deck.getCards().size());
+        for (int i = 0; i < cardsToLookAt; i++) revealed.push_back(deck.popTopCard());
+        int picksAllowed = (numToExile >= 5) ? 2 : 1; 
+        picksAllowed = std::min(picksAllowed, (int)revealed.size());
+        for (int p = 0; p < picksAllowed; p++) {
+            std::cout << "\n  --- MEMORY DREDGE (Pick " << (p + 1) << "/" << picksAllowed << ") ---\n";
+            for (int i = 0; i < revealed.size(); i++) std::cout << "  [" << (i + 1) << "] " << revealed[i]->getName() << "\n";
+            int choice = 0;
+            while (choice < 1 || choice > revealed.size()) {
+                std::cout << "  Select card to keep: ";
+                std::cin >> choice;
+                if (std::cin.fail()) {
+                    std::cin.clear(); std::cin.ignore(10000, '\n'); choice = 0;
+                }
+            }
+            int index = choice - 1;
+            hand.addCard(revealed[index]);
+            std::cout << "  --> Added " << revealed[index]->getName() <<"\n";
+            revealed.erase(revealed.begin() + index);
+        }
+
+        if (!revealed.empty()) {
+            std::cout << "  --> Put " << revealed.size() << " remaining cards on the bottom of the deck.\n";
+            for (auto& leftover : revealed)
+                deck.addCardToBottom(leftover); 
+        }
+    }
+));
+
+library["c_memory_dredge"] = std::move(memoryDredge);
 	Card blackLotus("Black Lotus", 0, 0, 0, 0, 'L');
 	blackLotus.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
 	library["c_black_lotus"] = blackLotus;

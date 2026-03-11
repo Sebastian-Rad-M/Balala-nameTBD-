@@ -15,7 +15,7 @@ bool PlayerInfo::spendGold(const int amount) {
 	gold -= amount;
 	return true;
 }
-Deck& PlayerInfo::getDeck() { return deck; }
+CardZone& PlayerInfo::getDeck() { return deck; }
 RelicZone& PlayerInfo::getRelicZone() { return relics; }
 
 PlayerInfo::PlayerInfo(const PlayerInfo& other) {

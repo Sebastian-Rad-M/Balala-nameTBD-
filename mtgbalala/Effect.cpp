@@ -1,6 +1,5 @@
 #include <iostream>
 #include <memory>
-
 #include "Effect.h"
 
 void DrawCardEffect::resolve(RoundTracker& state) {
@@ -33,16 +32,11 @@ void StormEffect::resolve(RoundTracker& state) {
 		baseEffect->resolve(state);
 	}
 }
-
-void ConditionalStormCheck::resolve(RoundTracker& state) {
-	const int storm = state.getStormCount();
-	if (evaluateCondition(storm)) {
-		innerEffect->resolve(state);
-	} else {
-		std::cout << "[Nope! Storm count did not meet condition: ]\n";
+void ConditionalEffect::resolve(RoundTracker& state) {
+        if (condition(state)) {
+            effectToResolve->resolve(state);
+        }
 	}
-}
-
 void GraveyardScaleEffect::resolve(RoundTracker& state) {
 	int count = 0;
 	const auto& grave = state.getGraveyard().getCards();
@@ -77,8 +71,11 @@ std::unique_ptr<IEffect> Score::clone() const { return std::make_unique<Score>(*
 std::unique_ptr<IEffect> StormEffect::clone() const {
 	return std::make_unique<StormEffect>(baseEffect->clone());
 }
-std::unique_ptr<IEffect> ConditionalStormCheck::clone() const {
-	return std::make_unique<ConditionalStormCheck>(op, targetValue, innerEffect->clone());
+std::unique_ptr<IEffect> ConditionalEffect::clone() const {
+	return std::make_unique< ConditionalEffect>(condition,effectToResolve->clone());
+}
+std::unique_ptr<IEffect> LambdaEffect::clone() const {
+	return std::make_unique<LambdaEffect>(action);
 }
 std::unique_ptr<IEffect> GraveyardScaleEffect::clone() const {
 	return std::make_unique<GraveyardScaleEffect>(searchedName, baseEffect->clone());
