@@ -17,7 +17,7 @@ class View {
 
    public:
 	static int readInt(int l, int h);
-	void promptForManaColor(ManaPool& manaPool,int nr=1);
+	
 	void showMainMenu(GameState& state, ActiveRun& activeRun);
 	void showDraft(GameState& state, ActiveRun& activeRun);
 	void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound,

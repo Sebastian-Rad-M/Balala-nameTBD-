@@ -31,27 +31,7 @@ int View::readInt(int l, int h) {
 	}
 	return value;
 }
-void View::promptForManaColor(ManaPool& manaPool,int nr) {
-    for(int i=0;i<nr;i++)
-	{char choice = ' ';
-    bool valid = false;
 
-    while (!valid) {
-        std::cout << "\n  --- CHOOSE A MANA COLOR -[R][G][B]:\n";
-        std::cin >> choice;
-        choice = std::toupper(choice);
-        if (choice == 'R' || choice == 'B' || choice == 'G') {
-            valid = true;
-        } else {
-            std::cout << "  [!] Invalid choice. Please type R, B, or G.\n";
-            std::cin.clear();
-            std::cin.ignore(10000, '\n'); 
-        }
-		
-	}
-	manaPool.addManaByColor(choice);
-}
-}
 
 void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	printSeparator("MAIN MENU");
@@ -221,7 +201,7 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
                 if (sellChoice > 0) {
                     int index = sellChoice - 1;
                     std::cout << "  --> Shattered " << permRelics[index]->getName() << " for 2 Mana!\n";
-					promptForManaColor(combatRound.getManaPool(),2);
+					combatRound.promptForManaColor(combatRound.getManaPool(),2);
                     
                     combatRound.getRelicZone().removeRelic(index); 
                     activeRun.getPlayer().getRelicZone().removeRelic(index);

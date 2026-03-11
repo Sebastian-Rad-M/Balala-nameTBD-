@@ -26,10 +26,11 @@ class DiscardEffect : public IEffect {
 
 class AddManaEffect : public IEffect {
    private:
-	int red, blue, green;
+	int red, blue, green,anycol;
 
    public:
-	AddManaEffect(int r, int b, int g) : red(r), blue(b), green(g) {}
+	AddManaEffect(int r, int b, int g) : red(r), blue(b), green(g),anycol(0) {}
+	AddManaEffect(int r, int b, int g,int ac) : red(r), blue(b), green(g),anycol(ac) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };

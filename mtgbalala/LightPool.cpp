@@ -13,7 +13,7 @@ void ManaPool::addManaByColor(char color, int amount) {
         case 'B': this->blue += amount; break;
         case 'G': this->green += amount; break;
         default:std::cout << "  [!] System Error: Tried to add unknown mana color '" << color << "'\n";break;
-    }//tTODO: error handling
+    }//TODO: error handling
 }
 void ManaPool::clearPool() {
 	red = 0;

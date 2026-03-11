@@ -38,8 +38,9 @@ class RoundTracker {
 
 	void addScore(int amount);
 	void addMana(int r, int b, int g);
+	void promptForManaColor(ManaPool& manaPool,int nr=1);
 	int getStormCount() const;
-
+	
 	ManaPool& getManaPool();
 	CardZone& getGraveyard();
 	CardZone& getExile();

@@ -37,10 +37,10 @@ void CardDatabase::loadAllCards() {
 	Card divination("Divination", 1, 0, 1, 0, 'C');
 	divination.addEffect(std::make_unique<DrawCardEffect>(2));
 	library["c_divination"] = divination;
-
+ 
 	Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
 	grapeshot.addEffect(std::make_unique<Score>(5));
-	grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(50)));
+	grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(5)));
 	library["c_grapeshot"] = grapeshot;
 
 	Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
@@ -61,7 +61,7 @@ void CardDatabase::loadAllCards() {
 
 	Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
 	manamorphose.addEffect(std::make_unique<DrawCardEffect>(1));
-	manamorphose.addEffect(std::make_unique<AddManaEffect>(1, 1, 0));
+	manamorphose.addEffect(std::make_unique<AddManaEffect>(0, 0, 0, 2));
 	library["c_manamorphose"] = manamorphose;  // maybe make it an uncommon and get of any color?
 	// Uncommons
 	Card overcharge("Overcharge", 0, 1, 1, 0, 'U');

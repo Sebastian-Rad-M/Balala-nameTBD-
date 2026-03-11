@@ -68,6 +68,27 @@ void RoundTracker::addMana(int r, int b, int g) {
 	relics.triggerOnManaAdded(r, b, g, *this);
 	manaPool.addMana(r, b, g);
 }
+void RoundTracker::promptForManaColor(ManaPool& manaPool,int nr) {
+    for(int i=0;i<nr;i++)
+	{char choice = ' ';
+    bool valid = false;
+
+    while (!valid) {
+        std::cout << "\n  --- CHOOSE A MANA COLOR -[R][G][B]:\n";
+        std::cin >> choice;
+        choice = std::toupper(choice);
+        if (choice == 'R' || choice == 'B' || choice == 'G') {
+            valid = true;
+        } else {
+            std::cout << "  [!] Invalid choice. Please type R, B, or G.\n";
+            std::cin.clear();
+            std::cin.ignore(10000, '\n'); 
+        }
+		
+	}
+	manaPool.addManaByColor(choice);
+}
+}
 int RoundTracker::getStormCount() const { return stormCount; }
 
 ManaPool& RoundTracker::getManaPool() { return manaPool; }

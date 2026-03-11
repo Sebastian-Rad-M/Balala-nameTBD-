@@ -22,8 +22,7 @@ void DiscardEffect::resolve(RoundTracker& state) {
 
 void AddManaEffect::resolve(RoundTracker& state) {
 	state.addMana(red, blue, green);
-	// TODO: maybe use print format instead?
-	std::cout << "Added Mana -> " << red << "R, " << blue << "B, " << green << "G\n";
+	if(anycol) state.promptForManaColor(state.getManaPool(),anycol);
 }
 
 void Score::resolve(RoundTracker& state) { state.addScore(baseScore); }
