@@ -14,7 +14,7 @@ void View::printSeparator(const std::string& title) {
 	std::cout << "\n╔══════════════════════════════════╗\n"
 			  << "║  " << title;
 	const int boxWidth = 34;
-	int padding = boxWidth - static_cast<int>(title.size()) - 1;
+	int padding = boxWidth - static_cast<int>(title.size()) - 2;
 	for (int i = 0; i < padding; ++i) {
 		std::cout << ' ';
 	}
@@ -30,6 +30,27 @@ int View::readInt(int l, int h) {
 		std::cout << "  Please enter a number between " << l << " and " << h << ": ";
 	}
 	return value;
+}
+void View::promptForManaColor(ManaPool& manaPool,int nr) {
+    for(int i=0;i<nr;i++)
+	{char choice = ' ';
+    bool valid = false;
+
+    while (!valid) {
+        std::cout << "\n  --- CHOOSE A MANA COLOR -[R][G][B]:\n";
+        std::cin >> choice;
+        choice = std::toupper(choice);
+        if (choice == 'R' || choice == 'B' || choice == 'G') {
+            valid = true;
+        } else {
+            std::cout << "  [!] Invalid choice. Please type R, B, or G.\n";
+            std::cin.clear();
+            std::cin.ignore(10000, '\n'); 
+        }
+		
+	}
+	manaPool.addManaByColor(choice);
+}
 }
 
 void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
@@ -104,7 +125,6 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 	printSeparator("COMBAT - Round " + std::to_string(activeRun.getCurrentRound()));
 	combatRound.printStatus();
 	std::cout << "\n  --- EQUIPPED RELICS ---\n";
-	// We pull the relics straight from the player's persistent data
 	const auto& equippedRelics = activeRun.getPlayer().getRelicZone().getRelicZone();
 
 	if (equippedRelics.empty()) {
@@ -185,18 +205,37 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 			std::cin.get();
 			return;
 		} else if (menuChoice == 4) {
-			std::cout << "\n  womp womp me no code yet\n";	// TODO: impl relic selling
-			std::cout << "  Press ENTER to return...\n";
-			std::cin.ignore(10000, '\n');
-			std::cin.get();
-			return;
+	        auto& permRelics = activeRun.getPlayer().getRelicZone().getRelicZone(); 
+            
+            if (permRelics.empty()) {
+                std::cout << "  [!] You have no relics to shatter!\n";
+            } else {
+                std::cout << "\n  --- SHATTER RELIC (+2 Generic Mana) ---\n";
+                for (size_t i = 0; i < permRelics.size(); i++) {
+                    std::cout << "  [" << (i + 1) << "] " << permRelics[i]->getName() << "\n";
+                }
+                std::cout << "  Select relic to shatter (0 to cancel): ";
+                
+                int sellChoice = readInt(0, permRelics.size());
+                
+                if (sellChoice > 0) {
+                    int index = sellChoice - 1;
+                    std::cout << "  --> Shattered " << permRelics[index]->getName() << " for 2 Mana!\n";
+					promptForManaColor(combatRound.getManaPool(),2);
+                    
+                    combatRound.getRelicZone().removeRelic(index); 
+                    activeRun.getPlayer().getRelicZone().removeRelic(index);
+                }
+            }
+            std::cout << "  Press ENTER to return...\n";
+            std::cin.ignore(10000, '\n'); std::cin.get();
+            return;
 		} else if (menuChoice == 0) {
 			playerWon = false;
 			state = GameState::GAME_OVER;
 			return;
 		}
 	} else {
-		// They picked a card! (cardChoice is 1-based, so subtract 1 for the array index)
 		combatRound.playCardFromHand(cardChoice - 1);
 	}
 
@@ -218,7 +257,7 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
 
 	printSeparator("THE MERCHANT");
 
-	Shop& shop = activeRun.getShop();  //!!!
+	Shop& shop = activeRun.getShop();  
 
 	std::cout << "  Gold: " << activeRun.getPlayer().getGold() << "G\n\n";
 
@@ -252,9 +291,10 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
 	}
 
 	std::cout << "\n  [0] Leave Shop\n"
-			  << "  Choice (0-" << totalItems << "): ";
+			  << "\n  ["<< totalItems+1 <<"] Sell Relic for Cash\n"
+			  << "  Choice (0-" << totalItems+1 << "): ";
 
-	int choice = readInt(0, totalItems);
+	int choice = readInt(0, totalItems+1);
 
 	if (choice == 0) {
 		state = GameState::COMBAT;
@@ -277,6 +317,28 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
 		}
 		result = shop.buyRelic(relicIndex, activeRun.getPlayer());
 	}
+	if (choice == totalItems+1 ) { 
+            auto& permRelics = activeRun.getPlayer().getRelicZone().getRelicZone();
+            if (permRelics.empty()) {
+                std::cout << "  [!] You have no relics to sell!\n";
+            } else {
+                std::cout << "\n  --- SELL RELIC ---\n";
+                for (size_t i = 0; i < permRelics.size(); i++) {
+                    std::cout << "  [" << (i + 1) << "] " << permRelics[i]->getName() << " (+"<<Shop::calculatePrice(permRelics[i]->getRarity())<<"G)\n";
+                }
+                std::cout << "  Select relic to sell (0 to cancel): ";
+                
+                int sellChoice = readInt(0, permRelics.size());
+                if (sellChoice > 0) {
+                    int index = sellChoice - 1;
+                    std::cout << "  --> Sold " << permRelics[index]->getName();    
+                    activeRun.getPlayer().addGold(Shop::calculatePrice(permRelics[index]->getRarity()));
+				    activeRun.getPlayer().getRelicZone().removeRelic(index);
+                }
+            }
+            std::cout << "  Press ENTER to continue...\n";
+            std::cin.ignore(10000, '\n'); std::cin.get();
+        }
 
 	std::cout << "\n";
 	switch (result) {
@@ -285,6 +347,9 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
 			break;
 		case BuyResult::NO_GOLD:
 			std::cout << "  [!] Not enough gold for " << itemName << ".\n";
+			std::cout << "  Press ENTER to continue...\n";
+			std::cin.ignore(10000, '\n');
+			std::cin.get();
 			break;
 		case BuyResult::SOLD_OUT:
 			std::cout << "  [!] That item is already sold out.\n";
@@ -292,11 +357,10 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
 		case BuyResult::INVALID:
 			std::cout << "  [!] Invalid selection.\n";
 			break;
+			std::cout << "  Press ENTER to continue...\n";
+			std::cin.ignore(10000, '\n');
+			std::cin.get();
 	}
-
-	std::cout << "  Press ENTER to continue...\n";
-	std::cin.ignore(10000, '\n');
-	std::cin.get();
 }
 
 void View::showGameOver(bool playerWon, const ActiveRun& activeRun) {

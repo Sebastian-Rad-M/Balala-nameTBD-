@@ -12,8 +12,7 @@ class Card {
 	std::string name;
 	int genericCost, redCost, blueCost, greenCost;
 	std::vector<std::unique_ptr<IEffect>> effects;
-	char rarity;  // C, U, R, L
-	// TODO: enum class
+	char rarity;//CURL
 	std::shared_ptr<modifier> mod = nullptr;
 
    public:

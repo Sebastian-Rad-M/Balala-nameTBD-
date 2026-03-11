@@ -1,11 +1,20 @@
 #include "LightPool.h"
-
+#include <cctype>
 void ManaPool::addMana(int r, int b, int g) {
 	red += r;
 	blue += b;
 	green += g;
 }
-
+void ManaPool::addManaByColor(char color, int amount) {
+    color = std::toupper(color);
+    switch (color) {
+        case 'R': 
+            this->red += amount; break;
+        case 'B': this->blue += amount; break;
+        case 'G': this->green += amount; break;
+        default:std::cout << "  [!] System Error: Tried to add unknown mana color '" << color << "'\n";break;
+    }//tTODO: error handling
+}
 void ManaPool::clearPool() {
 	red = 0;
 	blue = 0;

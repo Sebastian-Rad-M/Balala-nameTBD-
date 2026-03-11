@@ -44,7 +44,7 @@ class RoundTracker {
 	CardZone& getGraveyard();
 	CardZone& getExile();
 	CardZone& getHand();
-
+	RelicZone& getRelicZone();
 	void moveHandCardToExile(int index) { hand.moveCardTo(index, exile); }
 	int requestHandTarget();
 	void setupDeck(const Deck& library, const RelicZone& startingRelics);

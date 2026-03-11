@@ -5,14 +5,36 @@
 #include "CardDatabase.h"
 #include "RelicFactory.h"
 #include "Shop.h"
+int Shop::calculatePrice(char rarity) {
+    int basePrice = 0;
+    switch (rarity) {
+        case 'C': basePrice = 5; break; 
+        case 'U': basePrice = 7; break; 
+        case 'R': basePrice = 10; break;
+        case 'L': basePrice = 20; break;
+        case 'B': basePrice = 15; break; 
+        default:  basePrice = 50; break;  }
+    return basePrice; 
+}
 
 void Shop::generateRandomStock() {
 	cardStock.clear();
 	relicStock.clear();
-	// TODO: make price based on rarity
-	cardStock.push_back({CardDatabase::getInstance().getRandomCard(), 3, false});
-	cardStock.push_back({CardDatabase::getInstance().getRandomCard(), 4, false});
-	relicStock.push_back({RelicDatabase::getInstance().getRandomRelic(), 10, false});
+	for (int i = 0; i < 3; i++) {
+        auto randomCard = CardDatabase::getInstance().getRandomCard();
+        if (randomCard) {
+           int price = calculatePrice(randomCard->getRarity());
+             cardStock.push_back({randomCard, price, false}); 
+        }
+    }
+
+    for (int i = 0; i < 2; i++) {
+        auto randomRelic = RelicDatabase::getInstance().getRandomRelic();
+        if (randomRelic) {
+            int price = calculatePrice(randomRelic->getRarity()) * 2;
+            relicStock.push_back({randomRelic, price, false});
+        }
+    }
 }
 
 const std::vector<ShopItem<Card>>& Shop::getCards() const { return cardStock; }

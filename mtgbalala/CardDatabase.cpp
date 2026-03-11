@@ -1,6 +1,8 @@
 #include "CardDatabase.h"
 #include "Effect.h"
 #include "RNG.h"
+#include "json.hpp"
+using json = nlohmann::json;
 
 CardDatabase& CardDatabase::getInstance() {
 	static CardDatabase instance;
@@ -37,7 +39,7 @@ void CardDatabase::loadAllCards() {
 	library["c_divination"] = divination;
 
 	Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
-	grapeshot.addEffect(std::make_unique<Score>(50));
+	grapeshot.addEffect(std::make_unique<Score>(5));
 	grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(50)));
 	library["c_grapeshot"] = grapeshot;
 
@@ -48,7 +50,7 @@ void CardDatabase::loadAllCards() {
 	library["c_rite_of_flame"] = riteOfFlame;
 
 	Card lightingBolt("Lightning Bolt", 0, 1, 0, 0, 'C');
-	lightingBolt.addEffect(std::make_unique<Score>(100));
+	lightingBolt.addEffect(std::make_unique<Score>(10));
 	library["c_lighting_bolt"] = lightingBolt;
 
 	Card franticSearch("Frantic_Search", 2, 0, 1, 0, 'C');

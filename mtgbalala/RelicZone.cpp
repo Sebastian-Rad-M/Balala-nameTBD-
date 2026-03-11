@@ -11,6 +11,13 @@ bool RelicZone::addRelic(std::shared_ptr<IRelic> relic) {
 	return true;
 }
 
+void RelicZone::removeRelic(int index) {
+        if (index >= 0 && index < relics.size()) {
+            relics.erase(relics.begin() + index);
+        }
+    }
+
+
 void RelicZone::triggerOnManaAdded(int& r, int& b, int& g, RoundTracker& state) {
 	for (auto& relic : relics) {
 		relic->onManaAdded(r, b, g, state);

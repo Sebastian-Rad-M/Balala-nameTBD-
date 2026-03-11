@@ -77,7 +77,7 @@ CardZone& RoundTracker::getExile() { return exile; }
 CardZone& RoundTracker::getHand() { return hand; }
 int RoundTracker::getCurrentScore() const { return currentScore; }
 int RoundTracker::getTargetScore() const { return targetScore; }
-
+RelicZone& RoundTracker::getRelicZone() {return relics;}
 void RoundTracker::printStatus() const {
 	std::cout << "  Score : " << currentScore << " / " << targetScore << "\n"
 			  << "  Storm : " << stormCount << "\n"
@@ -146,6 +146,6 @@ int RoundTracker::requestHandTarget() {
 		std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
 	}
 
-	std::cout << "  Select a card to exile (1-" << handCards.size() << "): ";
+	std::cout << "  Select a card (1-" << handCards.size() << "): ";
 	return View::readInt(1, handCards.size()) - 1;
 }

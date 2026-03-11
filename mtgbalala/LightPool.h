@@ -11,7 +11,7 @@ class ManaPool {
 	ManaPool(const int r = 0, const int b = 0, const int g = 0) : red(r), blue(b), green(g) {}
 
 	void addMana(const int r, const int b, const int g);
-
+	void addManaByColor(char color, int amount = 1);
 	void clearPool();
 
 	bool canAfford(const int costR, const int costB, const int costG, const int costGeneric) const;

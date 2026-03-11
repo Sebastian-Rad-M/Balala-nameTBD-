@@ -16,6 +16,7 @@ class Shop {
 	std::vector<ShopItem<IRelic>> relicStock;
 
    public:
+   	static int calculatePrice(char rarity);
 	void generateRandomStock();
 
 	const std::vector<ShopItem<Card>>& getCards() const;
