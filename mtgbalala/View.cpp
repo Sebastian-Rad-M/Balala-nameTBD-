@@ -5,9 +5,9 @@
 
 void View::clearScreen() {
 #if defined(_WIN32)
-    std::system("cls");   // Windows command
+	std::system("cls");	 // Windows command
 #else
-    std::system("clear"); // Linux/Mac command
+	std::system("clear");  // Linux/Mac command
 #endif
 }
 void View::printSeparator(const std::string& title) {
@@ -22,7 +22,7 @@ void View::printSeparator(const std::string& title) {
 			  << "╚══════════════════════════════════╝\n";
 }
 
-	int View::readInt(int l, int h) {
+int View::readInt(int l, int h) {
 	int value;
 	while (!(std::cin >> value) || value < l || value > h) {
 		std::cin.clear();
@@ -41,7 +41,7 @@ void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	int choice = readInt(1, 2);
 
 	if (choice == 1) {
-		activeRun.resetRun(PlayerInfo()); ///!!
+		activeRun.resetRun(PlayerInfo());  ///!!
 		const std::string APPEND_COLORS[3] = {"red", "blue", "green"};
 		for (int i = 0; i < 2; i++) {
 			for (size_t j = 0; j < 3; j++) {
@@ -55,7 +55,8 @@ void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	}
 }
 
-void View::showDraft(GameState& state, ActiveRun& activeRun) {clearScreen();
+void View::showDraft(GameState& state, ActiveRun& activeRun) {
+	clearScreen();
 	printSeparator("DRAFT PHASE");
 	std::cout << "  Choose 5 cards from this pool of 10 to form your starting deck.\n\n";
 
@@ -90,8 +91,8 @@ void View::showDraft(GameState& state, ActiveRun& activeRun) {clearScreen();
 		pool.erase(pool.begin() + (choice - 1));
 	}
 
-	std::cout << "  Draft complete! Your starting deck has " << activeRun.getPlayer().getDeck().getSize()
-			  << " cards.\n";
+	std::cout << "  Draft complete! Your starting deck has "
+			  << activeRun.getPlayer().getDeck().getSize() << " cards.\n";
 	std::cout << "  Press ENTER to enter combat...\n";
 	std::cin.ignore(10000, '\n');
 	std::cin.get();
@@ -103,186 +104,199 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 	printSeparator("COMBAT - Round " + std::to_string(activeRun.getCurrentRound()));
 	combatRound.printStatus();
 	std::cout << "\n  --- EQUIPPED RELICS ---\n";
-    // We pull the relics straight from the player's persistent data
-    const auto& equippedRelics = activeRun.getPlayer().getRelicZone().getRelicZone();
-    
-    if (equippedRelics.empty()) {
-        std::cout << "  (None)\n";
-    } else {
+	// We pull the relics straight from the player's persistent data
+	const auto& equippedRelics = activeRun.getPlayer().getRelicZone().getRelicZone();
+
+	if (equippedRelics.empty()) {
+		std::cout << "  (None)\n";
+	} else {
 		int i = 1;
-        for (const auto& relic : equippedRelics) {
-            std::cout << i  <<"."<< relic->getName()<< "\n";	
+		for (const auto& relic : equippedRelics) {
+			std::cout << i << "." << relic->getName() << "\n";
 			i++;
 		}
-    }
+	}
 	std::cout << "\n  --- YOUR HAND ---\n";
 	const auto& handCards = combatRound.getHand().getCards();
 
 	if (handCards.empty()) {
 		std::cout << "  (Hand is empty!)\n";
 		std::cout << "  Press 0 to concede the run: ";
-        int cardChoice = readInt(0, 0); // Force them to type 0
-        if (cardChoice == 0) {
-            playerWon = false;
-            state = GameState::GAME_OVER;
-            return;}
-	} else for (int i = 0; i < handCards.size(); i++) std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
-		
+		int cardChoice = readInt(0, 0);	 // Force them to type 0
+		if (cardChoice == 0) {
+			playerWon = false;
+			state = GameState::GAME_OVER;
+			return;
+		}
+	} else {
+		for (int i = 0; i < handCards.size(); i++) {
+			std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
+		}
+	}
 
 	// --- 2. PLAYER ACTIONS ---
-	if (handCards.empty()) std::cout << "  [!] You have no cards to play!\n";
+	if (handCards.empty()) {
+		std::cout << "  [!] You have no cards to play!\n";
+	}
 
-    std::cout << "  Which card do you want to play? (1-" << handCards.size() << ", 0 for Menu): ";
-    int cardChoice = readInt(0, handCards.size());
+	std::cout << "  Which card do you want to play? (1-" << handCards.size() << ", 0 for Menu): ";
+	int cardChoice = readInt(0, handCards.size());
 
-    if (cardChoice == 0) {
-        clearScreen();
-        printSeparator("COMBAT MENU");
-        std::cout << "  [1] Back to Combat\n"
-                  << "  [2] View Graveyard\n"
-                  << "  [3] View Exile\n"
-                  << "  [4] Sell a Relic\n"
-                  << "  [0] Concede Run\n"
-                  << "  Choice: ";
+	if (cardChoice == 0) {
+		clearScreen();
+		printSeparator("COMBAT MENU");
+		std::cout << "  [1] Back to Combat\n"
+				  << "  [2] View Graveyard\n"
+				  << "  [3] View Exile\n"
+				  << "  [4] Sell a Relic\n"
+				  << "  [0] Concede Run\n"
+				  << "  Choice: ";
 
-        int menuChoice = readInt(0, 4);
+		int menuChoice = readInt(0, 4);
 
-        if (menuChoice == 1) return;
-        else if (menuChoice == 2) {
-            std::cout << "\n  --- GRAVEYARD ---\n";
-            const auto& grave = combatRound.getGraveyard().getCards();
-            if (grave.empty()) std::cout << "  (Empty)\n";
-            else {
-                for (const auto& c : grave) std::cout << "  - " << c->getName() << "\n";
-            }
-            std::cout << "\n  Press ENTER to return...\n";
-            std::cin.ignore(10000, '\n'); std::cin.get();
-            return;
-        } 
-        else if (menuChoice == 3) {
-            std::cout << "\n  --- EXILE ---\n";
-            const auto& exile = combatRound.getExile().getCards();
-            if (exile.empty()) std::cout << "  (Empty)\n";
-            else {
-                for (const auto& c : exile) std::cout << "  - " << c->getName() << "\n";
-            }
-            std::cout << "\n  Press ENTER to return...\n";
-            std::cin.ignore(10000, '\n'); std::cin.get();
-            return;
-        } 
-        else if (menuChoice == 4) {
-            std::cout << "\n  womp womp me no code yet\n"; //TODO: impl relic selling 
-            std::cout << "  Press ENTER to return...\n";
-            std::cin.ignore(10000, '\n'); std::cin.get();
-            return;
-        } 
-        else if (menuChoice == 0) {
-            playerWon = false;
-            state = GameState::GAME_OVER;
-            return;
-        }
-    } else {
-        // They picked a card! (cardChoice is 1-based, so subtract 1 for the array index)
-        combatRound.playCardFromHand(cardChoice - 1);
-    }
-	
+		if (menuChoice == 1) {
+			return;
+		} else if (menuChoice == 2) {
+			std::cout << "\n  --- GRAVEYARD ---\n";
+			const auto& grave = combatRound.getGraveyard().getCards();
+			if (grave.empty()) {
+				std::cout << "  (Empty)\n";
+			} else {
+				for (const auto& c : grave) {
+					std::cout << "  - " << c->getName() << "\n";
+				}
+			}
+			std::cout << "\n  Press ENTER to return...\n";
+			std::cin.ignore(10000, '\n');
+			std::cin.get();
+			return;
+		} else if (menuChoice == 3) {
+			std::cout << "\n  --- EXILE ---\n";
+			const auto& exile = combatRound.getExile().getCards();
+			if (exile.empty()) {
+				std::cout << "  (Empty)\n";
+			} else {
+				for (const auto& c : exile) {
+					std::cout << "  - " << c->getName() << "\n";
+				}
+			}
+			std::cout << "\n  Press ENTER to return...\n";
+			std::cin.ignore(10000, '\n');
+			std::cin.get();
+			return;
+		} else if (menuChoice == 4) {
+			std::cout << "\n  womp womp me no code yet\n";	// TODO: impl relic selling
+			std::cout << "  Press ENTER to return...\n";
+			std::cin.ignore(10000, '\n');
+			std::cin.get();
+			return;
+		} else if (menuChoice == 0) {
+			playerWon = false;
+			state = GameState::GAME_OVER;
+			return;
+		}
+	} else {
+		// They picked a card! (cardChoice is 1-based, so subtract 1 for the array index)
+		combatRound.playCardFromHand(cardChoice - 1);
+	}
+
 	if (combatRound.isRoundWon()) {
 		std::cout << "\n  *** BLIND DEFEATED! ***\n";
-        std::cout << "  Score : " << combatRound.getCurrentScore() << " / " << combatRound.getTargetScore() << "\n";
+		std::cout << "  Score : " << combatRound.getCurrentScore() << " / "
+				  << combatRound.getTargetScore() << "\n";
 		std::cout << "  Press ENTER to visit the Shop...\n";
 		std::cin.ignore(10000, '\n');
 		std::cin.get();
-        activeRun.finishRoundSequence();
-		activeRun.getShop().generateRandomStock();	
+		activeRun.finishRoundSequence();
+		activeRun.getShop().generateRandomStock();
 		state = GameState::SHOP;
 	}
 }
 
 void View::showShop(GameState& state, ActiveRun& activeRun) {
-    clearScreen();
-	
-    printSeparator("THE MERCHANT");
+	clearScreen();
 
-    Shop& shop = activeRun.getShop();//!!!
-	
-    std::cout << "  Gold: " << activeRun.getPlayer().getGold() << "G\n\n";
+	printSeparator("THE MERCHANT");
 
-    const auto& cards = shop.getCards();
-    const auto& relics = shop.getRelics();
+	Shop& shop = activeRun.getShop();  //!!!
 
-    int totalCards = cards.size();
-    int totalRelics = relics.size();
-    int totalItems = totalCards + totalRelics;
+	std::cout << "  Gold: " << activeRun.getPlayer().getGold() << "G\n\n";
 
-    std::cout << "  --- CARDS ---\n";
-    for (int i = 0; i < totalCards; ++i) {
-        std::cout << "  [" << (i + 1) << "] ";
-        if (cards[i].isSold) {
-            std::cout << "[SOLD OUT]\n";
-        } else {
-            std::cout << cards[i].item->getName() << " - " << cards[i].price << "G\n";
-        }
-    }
+	const auto& cards = shop.getCards();
+	const auto& relics = shop.getRelics();
 
-    std::cout << "\n  --- RELICS ---\n";
-    for (int i = 0; i < totalRelics; ++i) {
-        int displayIndex = i + 1 + totalCards;
-        std::cout << "  [" << displayIndex << "] ";
-        if (relics[i].isSold) {
-            std::cout << "[SOLD OUT]\n";
-        } else {
-            std::cout << relics[i].item->getName() << " (" 
-                      << relics[i].item->getDescription() << ") - " 
-                      << relics[i].price << "G\n";
-        }
-    }
+	int totalCards = cards.size();
+	int totalRelics = relics.size();
+	int totalItems = totalCards + totalRelics;
 
-    std::cout << "\n  [0] Leave Shop\n"
-              << "  Choice (0-" << totalItems << "): ";
+	std::cout << "  --- CARDS ---\n";
+	for (int i = 0; i < totalCards; ++i) {
+		std::cout << "  [" << (i + 1) << "] ";
+		if (cards[i].isSold) {
+			std::cout << "[SOLD OUT]\n";
+		} else {
+			std::cout << cards[i].item->getName() << " - " << cards[i].price << "G\n";
+		}
+	}
 
-    int choice = readInt(0, totalItems);
+	std::cout << "\n  --- RELICS ---\n";
+	for (int i = 0; i < totalRelics; ++i) {
+		int displayIndex = i + 1 + totalCards;
+		std::cout << "  [" << displayIndex << "] ";
+		if (relics[i].isSold) {
+			std::cout << "[SOLD OUT]\n";
+		} else {
+			std::cout << relics[i].item->getName() << " (" << relics[i].item->getDescription()
+					  << ") - " << relics[i].price << "G\n";
+		}
+	}
 
-    if (choice == 0) {
-        state = GameState::COMBAT;
-        return;
-    }
+	std::cout << "\n  [0] Leave Shop\n"
+			  << "  Choice (0-" << totalItems << "): ";
 
-    BuyResult result = BuyResult::INVALID;
-    std::string itemName = "";
+	int choice = readInt(0, totalItems);
 
-    if (choice > 0 && choice <= totalCards) {
-        int cardIndex = choice - 1;
-        if (!cards[cardIndex].isSold) {
-            itemName = cards[cardIndex].item->getName();
-        }
-        result = shop.buyCard(cardIndex, activeRun.getPlayer());
-    } else if (choice > totalCards && choice <= totalItems) {
-        int relicIndex = choice - 1 - totalCards;
-        if (!relics[relicIndex].isSold) {
-            itemName = relics[relicIndex].item->getName();
-        }
-        result = shop.buyRelic(relicIndex, activeRun.getPlayer());
-    }
+	if (choice == 0) {
+		state = GameState::COMBAT;
+		return;
+	}
 
-    std::cout << "\n";
-    switch (result) {
-        case BuyResult::SUCCESS:
-            std::cout << "  *** Successfully purchased: " << itemName << " ***\n";
-            break;
-        case BuyResult::NO_GOLD:
-            std::cout << "  [!] Not enough gold for " << itemName << ".\n";
-            break;
-        case BuyResult::SOLD_OUT:
-            std::cout << "  [!] That item is already sold out.\n";
-            break;
-        case BuyResult::INVALID:
-            std::cout << "  [!] Invalid selection.\n";
-            break;
-    }
+	BuyResult result = BuyResult::INVALID;
+	std::string itemName = "";
 
-    std::cout << "  Press ENTER to continue...\n";
-    std::cin.ignore(10000, '\n');
-    std::cin.get();
+	if (choice > 0 && choice <= totalCards) {
+		int cardIndex = choice - 1;
+		if (!cards[cardIndex].isSold) {
+			itemName = cards[cardIndex].item->getName();
+		}
+		result = shop.buyCard(cardIndex, activeRun.getPlayer());
+	} else if (choice > totalCards && choice <= totalItems) {
+		int relicIndex = choice - 1 - totalCards;
+		if (!relics[relicIndex].isSold) {
+			itemName = relics[relicIndex].item->getName();
+		}
+		result = shop.buyRelic(relicIndex, activeRun.getPlayer());
+	}
+
+	std::cout << "\n";
+	switch (result) {
+		case BuyResult::SUCCESS:
+			std::cout << "  *** Successfully purchased: " << itemName << " ***\n";
+			break;
+		case BuyResult::NO_GOLD:
+			std::cout << "  [!] Not enough gold for " << itemName << ".\n";
+			break;
+		case BuyResult::SOLD_OUT:
+			std::cout << "  [!] That item is already sold out.\n";
+			break;
+		case BuyResult::INVALID:
+			std::cout << "  [!] Invalid selection.\n";
+			break;
+	}
+
+	std::cout << "  Press ENTER to continue...\n";
+	std::cin.ignore(10000, '\n');
+	std::cin.get();
 }
 
 void View::showGameOver(bool playerWon, const ActiveRun& activeRun) {

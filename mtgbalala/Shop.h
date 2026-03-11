@@ -5,23 +5,23 @@ enum class BuyResult { SUCCESS, NO_GOLD, SOLD_OUT, INVALID };
 
 template <typename T>
 struct ShopItem {
-    std::shared_ptr<T> item;
-    int price;
-    bool isSold = false;
+	std::shared_ptr<T> item;
+	int price;
+	bool isSold = false;
 };
 
 class Shop {
-private:
-    std::vector<ShopItem<Card>> cardStock;
-    std::vector<ShopItem<IRelic>> relicStock;
+   private:
+	std::vector<ShopItem<Card>> cardStock;
+	std::vector<ShopItem<IRelic>> relicStock;
 
-public:
-    void generateRandomStock() ;
+   public:
+	void generateRandomStock();
 
-    const std::vector<ShopItem<Card>>& getCards() const ;
-    const std::vector<ShopItem<IRelic>>& getRelics() const;
+	const std::vector<ShopItem<Card>>& getCards() const;
+	const std::vector<ShopItem<IRelic>>& getRelics() const;
 
-    BuyResult buyCard(int index, PlayerInfo& player) ;
+	BuyResult buyCard(int index, PlayerInfo& player);
 
-    BuyResult buyRelic(int index, PlayerInfo& player) ;
+	BuyResult buyRelic(int index, PlayerInfo& player);
 };

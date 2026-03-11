@@ -2,45 +2,48 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "Playerinfo.h"
 
-	int PlayerInfo::getGold() const { return gold; }
+#include "PlayerInfo.h"
 
-	void PlayerInfo::addGold(int amount) { gold += amount; }
-	bool PlayerInfo::spendGold(int amount) {
-		if (gold < amount) {
-			return false;
-		}
-		gold -= amount;
-		return true;
+int PlayerInfo::getGold() const { return gold; }
+
+void PlayerInfo::addGold(const int amount) { gold += amount; }
+bool PlayerInfo::spendGold(const int amount) {
+	if (gold < amount) {
+		return false;
 	}
-	Deck& PlayerInfo::getDeck() { return deck; }
-	RelicZone& PlayerInfo::getRelicZone() { return relics; }
+	gold -= amount;
+	return true;
+}
+Deck& PlayerInfo::getDeck() { return deck; }
+RelicZone& PlayerInfo::getRelicZone() { return relics; }
 
 PlayerInfo::PlayerInfo(const PlayerInfo& other) {
-    this->gold = other.gold;
+	this->gold = other.gold;
 	for (const auto& card : other.deck.getCards()) {
-        this->deck.addCard(std::make_shared<Card>(*card));
-    }
-    for (const auto& relic : other.relics.getRelicZone()) {
-        this->relics.addRelic(relic->clone()); 
-    }
+		this->deck.addCard(std::make_shared<Card>(*card));
+	}
+	for (const auto& relic : other.relics.getRelicZone()) {
+		this->relics.addRelic(relic->clone());
+	}
 }
 
 PlayerInfo& PlayerInfo::operator=(const PlayerInfo& other) {
-    if (this == &other) return *this;
+	if (this == &other) {
+		return *this;
+	}
 
-    this->gold = other.gold;
+	this->gold = other.gold;
 
-    this->deck.clearZone();
-    this->relics.clearRelicZone(); 
+	this->deck.clearZone();
+	this->relics.clearRelicZone();
 
-    for (const auto& card : other.deck.getCards()) {
-        this->deck.addCard(std::make_shared<Card>(*card));
-    }
+	for (const auto& card : other.deck.getCards()) {
+		this->deck.addCard(std::make_shared<Card>(*card));
+	}
 
-    for (const auto& relic : other.relics.getRelicZone()) {
-        this->relics.addRelic(relic->clone());
-    }
-    return *this;
+	for (const auto& relic : other.relics.getRelicZone()) {
+		this->relics.addRelic(relic->clone());
+	}
+	return *this;
 }

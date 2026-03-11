@@ -1,22 +1,23 @@
 #pragma once
-#include <iostream>
-#include <string>
 #include <cstdlib>
-#include "Shop.h"
+#include <iostream>
 #include <limits>
+#include <string>
+
+#include "Shop.h"
 class ActiveRun;
 class RoundTracker;
 
 enum class GameState { MAIN_MENU, DRAFT, COMBAT, SHOP, GAME_OVER };
 
 class View {
-   private:void clearScreen();
+   private:
+	void clearScreen();
 	static void printSeparator(const std::string& title);
-	
 
    public:
-   static int readInt(int l, int h);
-	
+	static int readInt(int l, int h);
+
 	void showMainMenu(GameState& state, ActiveRun& activeRun);
 	void showDraft(GameState& state, ActiveRun& activeRun);
 	void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound,

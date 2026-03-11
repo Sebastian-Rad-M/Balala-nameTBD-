@@ -15,7 +15,8 @@ void GameManager::run() {
 			case GameState::DRAFT:
 				view.showDraft(state, activeRun);
 				round.emplace(activeRun);
-				round->setupDeck(activeRun.getPlayer().getDeck(), activeRun.getPlayer().getRelicZone());
+				round->setupDeck(activeRun.getPlayer().getDeck(),
+								 activeRun.getPlayer().getRelicZone());
 				break;
 
 			case GameState::COMBAT:
@@ -25,7 +26,8 @@ void GameManager::run() {
 			case GameState::SHOP:
 				view.showShop(state, activeRun);
 				round.emplace(activeRun);
-				round->setupDeck(activeRun.getPlayer().getDeck(), activeRun.getPlayer().getRelicZone());
+				round->setupDeck(activeRun.getPlayer().getDeck(),
+								 activeRun.getPlayer().getRelicZone());
 				round->startNewRound();
 				break;
 

@@ -2,7 +2,7 @@
 #pragma once
 class RNG {
    private:
-	///goated rng function
+	/// goated rng function
 	static std::mt19937& getEngine() {
 		static std::random_device rd;
 		static std::mt19937 gen(rd());
@@ -10,8 +10,7 @@ class RNG {
 	}
 
    public:
-	
-	static int range(int min, int max) {
+	static int range(const int min, const int max) {
 		std::uniform_int_distribution<> dist(min, max);
 		return dist(getEngine());
 	}

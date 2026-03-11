@@ -1,31 +1,29 @@
 #pragma once
-#include <map>
-#include <string>
-#include <memory>
 #include <iostream>
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
+
 #include "Relic.h"
 
-//i lied its a database 
+// i lied its a database
 class RelicDatabase {
-private:
-    std::map<std::string, std::shared_ptr<IRelic>> registry;
+   private:
+	std::map<std::string, std::shared_ptr<IRelic>> registry;
 
-    // Private constructor for Singleton
-    //singleton slop 
-    RelicDatabase();
+	// Private constructor for Singleton
+	// singleton slop
+	RelicDatabase();
 
-public:
-    static RelicDatabase& getInstance();
+   public:
+	static RelicDatabase& getInstance();
 
-    RelicDatabase(const RelicDatabase&) = delete;
-    RelicDatabase& operator=(const RelicDatabase&) = delete;
+	RelicDatabase(const RelicDatabase&) = delete;
+	RelicDatabase& operator=(const RelicDatabase&) = delete;
 
-    void loadAllRelics();
+	void loadAllRelics();
 
-    std::shared_ptr<IRelic> getRelic(const std::string& id);
+	std::shared_ptr<IRelic> getRelic(const std::string& id);
 
-    std::shared_ptr<IRelic> getRandomRelic();
+	std::shared_ptr<IRelic> getRandomRelic();
 };

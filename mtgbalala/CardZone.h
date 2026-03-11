@@ -1,13 +1,12 @@
-#include <vector>
 #include <memory>
+#include <vector>
 #pragma once
-class Card; 
+class Card;
 class CardZone {
    protected:
 	std::vector<std::shared_ptr<Card>> cards;
 
    public:
-
 	void addCard(std::shared_ptr<Card> c);
 	void removeCard(int index);
 	int getSize() const;
@@ -15,4 +14,3 @@ class CardZone {
 	void moveCardTo(int index, CardZone& destination);
 	const std::vector<std::shared_ptr<Card>>& getCards() const;
 };
-

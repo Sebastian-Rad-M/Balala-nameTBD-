@@ -2,11 +2,12 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+
 #include "Card.h"
+#include "CardZone.h"
 #include "Deck.h"
 #include "LightPool.h"
 #include "RelicZone.h"
-#include "CardZone.h"
 #include "Status.h"
 #include "View.h"
 class ActiveRun;
@@ -23,6 +24,7 @@ class RoundTracker {
 	int targetScore;
 	int stormCount;
 	int nextSpellMultiplier = 1;
+
    public:
 	RoundTracker(const ActiveRun& runData);
 
@@ -42,14 +44,12 @@ class RoundTracker {
 	CardZone& getGraveyard();
 	CardZone& getExile();
 	CardZone& getHand();
-	
-	void moveHandCardToExile(int index) {
-        hand.moveCardTo(index, exile);
-    }
+
+	void moveHandCardToExile(int index) { hand.moveCardTo(index, exile); }
 	int requestHandTarget();
 	void setupDeck(const Deck& library, const RelicZone& startingRelics);
 	void printStatus() const;
 	bool playCardFromHand(int index);
 	int getCurrentScore() const;
-    int getTargetScore() const;
+	int getTargetScore() const;
 };

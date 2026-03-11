@@ -12,17 +12,20 @@ void ManaPool::clearPool() {
 	green = 0;
 }
 
-bool ManaPool::canAfford(int costR, int costB, int costG, int costGeneric) const {
-	if (red < costR || blue < costB || green < costG) return false;
-	int leftoverR = red - costR;
-	int leftoverB = blue - costB;
-	int leftoverG = green - costG;
-	int totalLeftover = leftoverR + leftoverB + leftoverG;
+bool ManaPool::canAfford(const int costR, const int costB, const int costG,
+						 const int costGeneric) const {
+	if (red < costR || blue < costB || green < costG) {
+		return false;
+	}
+	const int leftoverR = red - costR;
+	const int leftoverB = blue - costB;
+	const int leftoverG = green - costG;
+	const int totalLeftover = leftoverR + leftoverB + leftoverG;
 	return totalLeftover >= costGeneric;
 }
 
-// TODO: check if can afford first 
-void ManaPool::spendMana(int costR, int costB, int costG, int costGeneric) {
+// TODO: check if can afford first
+void ManaPool::spendMana(const int costR, const int costB, const int costG, const int costGeneric) {
 	red -= costR;
 	blue -= costB;
 	green -= costG;
@@ -30,7 +33,7 @@ void ManaPool::spendMana(int costR, int costB, int costG, int costGeneric) {
 	/// TODO: player chosen
 	int genericRemaining = costGeneric;
 	// is this overkill? yes
-	int* vars[3] = {&green, &blue, &red};
+	int* const vars[3] = {&green, &blue, &red};
 	for (int i = 0; i < 3; i++) {
 		while (genericRemaining > 0 && *vars[i] > 0) {
 			(*vars[i])--;
@@ -38,4 +41,3 @@ void ManaPool::spendMana(int costR, int costB, int costG, int costGeneric) {
 		}
 	}
 }
-

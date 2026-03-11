@@ -8,16 +8,15 @@ class ManaPool {
 	int green;
 
    public:
-	ManaPool(int r = 0, int b = 0, int g = 0) : red(r), blue(b), green(g) {}
+	ManaPool(const int r = 0, const int b = 0, const int g = 0) : red(r), blue(b), green(g) {}
 
-	void addMana(int r, int b, int g);
+	void addMana(const int r, const int b, const int g);
 
 	void clearPool();
 
-	bool canAfford(int costR, int costB, int costG, int costGeneric) const;
+	bool canAfford(const int costR, const int costB, const int costG, const int costGeneric) const;
 
-	
-	void spendMana(int costR, int costB, int costG, int costGeneric);
+	void spendMana(const int costR, const int costB, const int costG, const int costGeneric);
 	// check canAfford before
 	// for generic We drain Green first, then Blue, then Red (arbitrary priority).
 

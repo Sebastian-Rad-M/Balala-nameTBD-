@@ -1,8 +1,6 @@
-#include <cstdlib>
-#include <random>
 #include "CardDatabase.h"
-#include "RNG.h"
 #include "Effect.h"
+#include "RNG.h"
 
 CardDatabase& CardDatabase::getInstance() {
 	static CardDatabase instance;
@@ -12,27 +10,27 @@ CardDatabase& CardDatabase::getInstance() {
 CardDatabase::CardDatabase() { loadAllCards(); }
 
 void CardDatabase::loadAllCards() {
-	// --- STARTER CARDS --- 
+	// --- STARTER CARDS ---
 	// name, genericCost, redCost, blueCost, greenCost, rarity
 	Card basicRed("Basic Red", 0, 0, 0, 0, 'B');
-	basicRed.addEffect(std::make_unique<ConditionalStormCheck>(CompareOp::LESS_THAN, 3,std::make_unique<AddManaEffect>(1, 0, 0)));
+	basicRed.addEffect(std::make_unique<ConditionalStormCheck>(
+		CompareOp::LESS_THAN, 3, std::make_unique<AddManaEffect>(1, 0, 0)));
 	library["c_basic_red"] = basicRed;
 
-
 	Card basicBlue("Basic Blue", 0, 0, 0, 0, 'B');
-	basicBlue.addEffect(std::make_unique<ConditionalStormCheck>(CompareOp::LESS_THAN, 3,std::make_unique<AddManaEffect>(0, 1, 0)));
+	basicBlue.addEffect(std::make_unique<ConditionalStormCheck>(
+		CompareOp::LESS_THAN, 3, std::make_unique<AddManaEffect>(0, 1, 0)));
 	library["c_basic_blue"] = basicBlue;
 
-
 	Card basicGreen("Basic Green", 0, 0, 0, 0, 'B');
-	basicGreen.addEffect(std::make_unique<ConditionalStormCheck>(CompareOp::LESS_THAN, 3,std::make_unique<AddManaEffect>(0, 0, 1)));
+	basicGreen.addEffect(std::make_unique<ConditionalStormCheck>(
+		CompareOp::LESS_THAN, 3, std::make_unique<AddManaEffect>(0, 0, 1)));
 	library["c_basic_green"] = basicGreen;
 
 	// --- COMMON CARDS ---
 	Card gitaxianProbe("Gitaxian Probe", 0, 0, 0, 0, 'C');
 	gitaxianProbe.addEffect(std::make_unique<DrawCardEffect>(1));
 	library["c_gitaxian_probe"] = gitaxianProbe;
-
 
 	Card divination("Divination", 1, 0, 1, 0, 'C');
 	divination.addEffect(std::make_unique<DrawCardEffect>(2));
@@ -43,17 +41,15 @@ void CardDatabase::loadAllCards() {
 	grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(50)));
 	library["c_grapeshot"] = grapeshot;
 
-
 	Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
-    riteOfFlame.addEffect(std::make_unique<AddManaEffect>(2, 0, 0));
-    riteOfFlame.addEffect(std::make_unique<GraveyardScaleEffect>("Rite of Flame",std::make_unique<AddManaEffect>(1, 0, 0) ));
-    library["c_rite_of_flame"] = riteOfFlame;
-
+	riteOfFlame.addEffect(std::make_unique<AddManaEffect>(2, 0, 0));
+	riteOfFlame.addEffect(std::make_unique<GraveyardScaleEffect>(
+		"Rite of Flame", std::make_unique<AddManaEffect>(1, 0, 0)));
+	library["c_rite_of_flame"] = riteOfFlame;
 
 	Card lightingBolt("Lightning Bolt", 0, 1, 0, 0, 'C');
 	lightingBolt.addEffect(std::make_unique<Score>(100));
 	library["c_lighting_bolt"] = lightingBolt;
-
 
 	Card franticSearch("Frantic_Search", 2, 0, 1, 0, 'C');
 	franticSearch.addEffect(std::make_unique<DrawCardEffect>(2));
@@ -61,26 +57,26 @@ void CardDatabase::loadAllCards() {
 	franticSearch.addEffect(std::make_unique<DiscardEffect>(2));
 	library["c_frantic_search"] = franticSearch;
 
-
 	Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
 	manamorphose.addEffect(std::make_unique<DrawCardEffect>(1));
 	manamorphose.addEffect(std::make_unique<AddManaEffect>(1, 1, 0));
-	library["c_manamorphose"] = manamorphose; //maybe make it an uncommon and get of any color? 
-	//Uncommons
+	library["c_manamorphose"] = manamorphose;  // maybe make it an uncommon and get of any color?
+	// Uncommons
 	Card overcharge("Overcharge", 0, 1, 1, 0, 'U');
-    overcharge.addEffect(std::make_unique<ApplyStatusEffect>(std::make_unique<OverchargeStatus>(1) ));
-    library["c_overcharge"] = overcharge;
+	overcharge.addEffect(
+		std::make_unique<ApplyStatusEffect>(std::make_unique<OverchargeStatus>(1)));
+	library["c_overcharge"] = overcharge;
 
-    // Rares and Legendaries
+	// Rares and Legendaries
 	Card ancestralRecall("Ancestral Recall", 0, 0, 1, 0, 'R');
 	ancestralRecall.addEffect(std::make_unique<DrawCardEffect>(3));
 	library["c_ancestral_recall"] = ancestralRecall;
-    
-    Card blackLotus("Black Lotus", 0, 0, 0, 0, 'L');
-    blackLotus.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
-    library["c_black_lotus"] = blackLotus;
-	
-	//TODO: JSON PARCER
+
+	Card blackLotus("Black Lotus", 0, 0, 0, 0, 'L');
+	blackLotus.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
+	library["c_black_lotus"] = blackLotus;
+
+	// TODO: JSON PARSER
 }
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
 	if (library.find(cardID) != library.end()) {
@@ -91,11 +87,13 @@ std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
 }
 
 std::shared_ptr<Card> CardDatabase::getTrueRandomCard() {
-	if (library.empty()) return nullptr;    
-    int randomIndex = RNG::range(0, library.size() - 1);
-    auto rCard = library.begin();
-    std::advance(rCard, randomIndex);
-    return std::make_shared<Card>(rCard->second);
+	if (library.empty()) {
+		return nullptr;
+	}
+	int randomIndex = RNG::range(0, library.size() - 1);
+	auto rCard = library.begin();
+	std::advance(rCard, randomIndex);
+	return std::make_shared<Card>(rCard->second);
 }
 
 std::shared_ptr<Card> CardDatabase::getRandomCard() {
@@ -145,6 +143,6 @@ std::shared_ptr<Card> CardDatabase::getRandomCard() {
 		}
 	}
 
-	return nullptr;	 // Fallback 
-	/// TODO: error handling 
+	return nullptr;	 // Fallback
+					 /// TODO: error handling
 }

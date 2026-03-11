@@ -1,57 +1,89 @@
 #include <iostream>
 #include <memory>
+
 #include "Effect.h"
 
-    void DrawCardEffect::resolve(RoundTracker& state) {
-        for (int i = 0; i < amount; i++) state.drawCard();
-    }
+void DrawCardEffect::resolve(RoundTracker& state) {
+	for (int i = 0; i < amount; i++) {
+		state.drawCard();
+	}
+}
 
-    void DiscardEffect::resolve(RoundTracker& state) {
-        for (int i = 0; i < amount; i++)
-            if (state.promptDiscard()) ;
-            else {
-                std::cout << "No cards to discard.\n";
-                break;
-            }
-        
-    }
+void DiscardEffect::resolve(RoundTracker& state) {
+	for (int i = 0; i < amount; i++) {
+		if (state.promptDiscard())
+			;
+		else {
+			std::cout << "No cards to discard.\n";
+			break;
+		}
+	}
+}
 
-    void AddManaEffect::resolve(RoundTracker& state) {
-        state.addMana(red, blue, green);
-        std::cout << "Added Mana -> " << red << "R, " << blue << "B, " << green << "G\n";
-    }
+void AddManaEffect::resolve(RoundTracker& state) {
+	state.addMana(red, blue, green);
+	// TODO: maybe use print format instead?
+	std::cout << "Added Mana -> " << red << "R, " << blue << "B, " << green << "G\n";
+}
 
-    void Score::resolve(RoundTracker& state) { state.addScore(baseScore); }
+void Score::resolve(RoundTracker& state) { state.addScore(baseScore); }
 
-    void StormEffect::resolve(RoundTracker& state) {
-        int storm = state.getStormCount();
-        for (int i = 0; i < storm; i++)	baseEffect->resolve(state);
-    }
+void StormEffect::resolve(RoundTracker& state) {
+	const int storm = state.getStormCount();
+	for (int i = 0; i < storm; i++) {
+		baseEffect->resolve(state);
+	}
+}
 
-    void ConditionalStormCheck::resolve(RoundTracker& state) {
-            int storm = state.getStormCount();
-            if (evaluateCondition(storm))innerEffect->resolve(state);
-                else std::cout << "[Nope! Storm count did not meet condition: ]\n";
-        }
-        
-    void GraveyardScaleEffect::resolve(RoundTracker& state) {
-        int count = 0;
-        const auto& grave = state.getGraveyard().getCards();
-        for (const auto& card : grave) if (card->getName() == searchedName) count++;
-        if (count > 0)  for (int i = 0; i < count; i++)baseEffect->resolve(state);
-    }
+void ConditionalStormCheck::resolve(RoundTracker& state) {
+	const int storm = state.getStormCount();
+	if (evaluateCondition(storm)) {
+		innerEffect->resolve(state);
+	} else {
+		std::cout << "[Nope! Storm count did not meet condition: ]\n";
+	}
+}
 
-    void ApplyStatusEffect::resolve(RoundTracker& state) {
-        std::cout << " Gained status: " << statusToApply->getName() << "!\n";
-        state.addStatus(statusToApply->clone());
-    }
+void GraveyardScaleEffect::resolve(RoundTracker& state) {
+	int count = 0;
+	const auto& grave = state.getGraveyard().getCards();
+	for (const auto& card : grave) {
+		if (card->getName() == searchedName) {
+			count++;
+		}
+	}
+	if (count > 0) {
+		for (int i = 0; i < count; i++) {
+			baseEffect->resolve(state);
+		}
+	}
+}
 
+void ApplyStatusEffect::resolve(RoundTracker& state) {
+	std::cout << " Gained status: " << statusToApply->getName() << "!\n";
+	state.addStatus(statusToApply->clone());
+}
 
-    std::unique_ptr<IEffect> DrawCardEffect::clone() const {return std::make_unique<DrawCardEffect>(*this);}    
-    std::unique_ptr<IEffect> DiscardEffect::clone() const {return std::make_unique<DiscardEffect>(*this);}
-    std::unique_ptr<IEffect> AddManaEffect::clone() const {return std::make_unique<AddManaEffect>(*this);}
-    std::unique_ptr<IEffect> Score::clone() const { return std::make_unique<Score>(*this); }
-    std::unique_ptr<IEffect> StormEffect::clone() const {return std::make_unique<StormEffect>(baseEffect->clone());}
-    std::unique_ptr<IEffect> ConditionalStormCheck::clone() const {return std::make_unique<ConditionalStormCheck>(op, targetValue, innerEffect->clone());}
-    std::unique_ptr<IEffect> GraveyardScaleEffect::clone() const {return std::make_unique<GraveyardScaleEffect>(searchedName, baseEffect->clone());}
-    std::unique_ptr<IEffect> ApplyStatusEffect::clone() const {return std::make_unique<ApplyStatusEffect>(statusToApply->clone());}
+// TODO: macros?
+std::unique_ptr<IEffect> DrawCardEffect::clone() const {
+	return std::make_unique<DrawCardEffect>(*this);
+}
+std::unique_ptr<IEffect> DiscardEffect::clone() const {
+	return std::make_unique<DiscardEffect>(*this);
+}
+std::unique_ptr<IEffect> AddManaEffect::clone() const {
+	return std::make_unique<AddManaEffect>(*this);
+}
+std::unique_ptr<IEffect> Score::clone() const { return std::make_unique<Score>(*this); }
+std::unique_ptr<IEffect> StormEffect::clone() const {
+	return std::make_unique<StormEffect>(baseEffect->clone());
+}
+std::unique_ptr<IEffect> ConditionalStormCheck::clone() const {
+	return std::make_unique<ConditionalStormCheck>(op, targetValue, innerEffect->clone());
+}
+std::unique_ptr<IEffect> GraveyardScaleEffect::clone() const {
+	return std::make_unique<GraveyardScaleEffect>(searchedName, baseEffect->clone());
+}
+std::unique_ptr<IEffect> ApplyStatusEffect::clone() const {
+	return std::make_unique<ApplyStatusEffect>(statusToApply->clone());
+}
